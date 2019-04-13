@@ -64,5 +64,5 @@ class LogoffView(PermissionRequiredMixin, View):
         return HttpResponse(content='Uitgelogd')
 
 
-class Main(TemplateView):
+class Main(PermissionRequiredMixin, TemplateView):
     template_name = 'index.html'
