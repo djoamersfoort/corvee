@@ -1,0 +1,27 @@
+version: '3'
+services:
+  # Nginx container
+  corvee_nginx:
+    container_name: corvee_nginx
+    image: nginx:mainline
+    ports:
+      - 8182:80
+    volumes:
+      - /home/corvee/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /home/corvee/site:/var/www/corvee
+    restart: always
+    networks:
+      - corvee
+
+  django:
+    container_name: django
+    image: python:latest
+    volumes:
+      - /home/corvee/django:/data
+    restart: always
+    networks:
+      - corvee
+    entrypoint: /data/start.sh
+
+networks:
+  corvee:
