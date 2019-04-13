@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views.generic import TemplateView
 from requests_oauthlib import OAuth2Session
 from django.views.generic.edit import View
@@ -7,8 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout, login as auth_login
 from corvee import settings
 from .mixins import PermissionRequiredMixin
+import uuid
 
-# Create your views here.
 
 class LoginView(View):
     def get(self, request, *args, **kwargs):
@@ -29,9 +28,9 @@ class LoginResponseView(View):
             access_token = oauth.fetch_token(settings.IDP_TOKEN_URL,
                                              authorization_response=full_response_url,
                                              client_secret=settings.IDP_CLIENT_SECRET)
-        except:
+        except Exception as e:
             # Something went wrong getting the token
-            return HttpResponseForbidden('Geen toegang')
+            return HttpResponseForbidden('Geen toegang: {0}'.format(e))
 
         if 'access_token' in access_token and access_token['access_token'] != '':
             user_profile = oauth.get(settings.IDP_API_URL).json()
@@ -66,4 +65,4 @@ class LogoffView(PermissionRequiredMixin, View):
 
 
 class Main(TemplateView):
-  template_name = 'index.html'
+    template_name = 'index.html'
