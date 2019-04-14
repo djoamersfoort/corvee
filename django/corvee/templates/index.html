@@ -26,10 +26,10 @@
             <a class="nav-link" href="#">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Ledenlijst</a>
+            <a class="nav-link" href="{% url 'leden' %}">Ledenlijst</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Instellingen</a>
+            <a class="nav-link" href="#" onclick="$(this).html(($(this).html()=='Instellingen'?'Instellingen?':'Instellingen!'))">Instellingen</a>
           </li>
         </ul>
       </div>

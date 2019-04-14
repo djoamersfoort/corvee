@@ -91,6 +91,27 @@ class Main(PermissionRequiredMixin, ListView):
         return context
 
 
+class Leden(PermissionRequiredMixin, ListView):
+    model = Persoon
+    template_name = 'leden.html'
+
+    def get_queryset(self):
+        day = self.kwargs.get('day', 'friday')
+        if day == 'friday':
+            queryset = Persoon.objects.filter(day_friday=True)
+        else:
+            queryset = Persoon.objects.filter(day_saturday=True)
+
+        queryset = queryset.order_by('latest')
+
+        return queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['day'] = self.kwargs.get('day', 'friday')
+        return context
+
+
 class Acknowledge(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))

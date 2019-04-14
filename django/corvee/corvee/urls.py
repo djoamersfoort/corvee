@@ -19,6 +19,8 @@ from .src import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('leden/', views.Leden.as_view(), name='leden'),
+    path('leden/<str:day>/', views.Leden.as_view(), name='leden'),
     path('main/', views.Main.as_view(), name='main'),
     path('main/<str:day>/', views.Main.as_view(), name='main'),
     path('ack/<int:pk>', views.Acknowledge.as_view(), name='acknowledge'),
