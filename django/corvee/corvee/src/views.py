@@ -9,7 +9,7 @@ from django.shortcuts import reverse
 from .models import Persoon
 from .mixins import PermissionRequiredMixin
 from .corvee import Corvee
-from datetime import date
+from datetime import datetime
 import uuid
 
 
@@ -90,6 +90,6 @@ class Acknowledge(PermissionRequiredMixin, View):
         url = request.META.get('HTTP_REFERER', reverse('main'))
 
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-        persoon.latest = date.today()
+        persoon.latest = datetime.now()
         persoon.save()
         return HttpResponseRedirect(url)

@@ -11,4 +11,4 @@ class Persoon(models.Model):
     picture = models.TextField(blank=True, null=True, verbose_name='Foto', editable=True)
     day_friday = models.BooleanField(null=False, default=False)
     day_saturday = models.BooleanField(null=False, default=False)
-    latest = models.DateField(auto_now=True, blank=False)
+    latest = models.DateTimeField(auto_now=True, blank=False)
