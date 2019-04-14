@@ -36,12 +36,10 @@
     </nav>
 
     <div class="container mt-5">
-
-      <div class="switch-label">
+      <div class="switch-label {{ day }}">
         <span>Vrijdag</span>
         <div class="material-switch">
-          <input id="switch" name="switch-default" type="checkbox" onchange="switchDay()">
-          <label for="switch" class="bg-primary"></label>
+          <a class="bg-primary" href="{% url 'main' %}{% if day == "friday" %}saturday{% endif %}"></a>
         </div>
         <span>Zaterdag</span>
       </div>
