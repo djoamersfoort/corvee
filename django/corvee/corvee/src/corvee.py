@@ -13,6 +13,10 @@ class Corvee:
             members = response.json()
             for dag in members:
                 for member in members[dag]:
+                    print(member['types'])
+                    if not 'member' in member['types'] and not 'strippenkaart' in member['types']:
+                        continue
+
                     try:
                         persoon = Persoon.objects.get(id=member['id'])
                     except Persoon.DoesNotExist:
