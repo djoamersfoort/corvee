@@ -73,6 +73,11 @@ class Main(PermissionRequiredMixin, ListView):
     model = Persoon
     template_name = 'index.html'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['day'] = self.kwargs.get('day', 'friday')
+        return context
+
     def get_queryset(self):
         day = self.kwargs.get('day', 'friday')
         if day == 'friday':
