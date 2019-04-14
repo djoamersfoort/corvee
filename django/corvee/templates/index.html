@@ -36,21 +36,22 @@
     </nav>
 
     <div class="container mt-5">
+
       <div class="switch-label">
-        <span>vrijdag</span>
+        <span>Vrijdag</span>
         <div class="material-switch">
-          <input id="switch" name="switch-default" type="checkbox">
+          <input id="switch" name="switch-default" type="checkbox" onchange="switchDay()">
           <label for="switch" class="bg-primary"></label>
         </div>
-        <span>zaterdag</span>
+        <span>Zaterdag</span>
       </div>
 
       <div class="row mt-5 text-center">
         <div class="col">
           <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://northbridgecos.com/wp-content/uploads/2016/01/sample4_l.jpg" alt="Foto van ...">
+            <img class="card-img-top" src="{{ object_list.0.picture }}" alt="Foto van ...">
             <div class="card-body">
-              <h5 class="card-title">Wiebe Beeftink</h5>
+              <h5 class="card-title">{{ object_list.0.first_name }} {{ object_list.0.last_name }}</h5>
               <a href="#" class="card-link">Aftekenen</a>
               <a href="#" class="card-link">Negeren</a>
               <a href="#" class="card-link">Afwezig</a>
@@ -59,9 +60,9 @@
         </div>
         <div class="col">
           <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://northbridgecos.com/wp-content/uploads/2016/01/sample4_l.jpg" alt="Foto van ...">
+            <img class="card-img-top" src="{{ object_list.1.picture }}" alt="Foto van ...">
             <div class="card-body">
-              <h5 class="card-title">Thom Struijk</h5>
+              <h5 class="card-title">{{ object_list.1.first_name }} {{ object_list.1.last_name }}</h5>
               <a href="#" class="card-link">Aftekenen</a>
               <a href="#" class="card-link">Negeren</a>
             </div>
@@ -69,9 +70,9 @@
         </div>
         <div class="col">
           <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://northbridgecos.com/wp-content/uploads/2016/01/sample4_l.jpg" alt="Foto van ...">
+            <img class="card-img-top" src="{{ object_list.2.picture }}" alt="Foto van ...">
             <div class="card-body">
-              <h5 class="card-title">Niels Elstrodt</h5>
+              <h5 class="card-title">{{ object_list.2.first_name }} {{ object_list.2.last_name }}</h5>
               <a href="#" class="card-link">Aftekenen</a>
               <a href="#" class="card-link">Negeren</a>
             </div>
@@ -81,3 +82,9 @@
     </div>
   </body>
 </html>
+
+<script>
+    function switchDay() {
+        console.log($("#switch"));
+    }
+</script>

@@ -1,11 +1,13 @@
-from django.views.generic import TemplateView
 from requests_oauthlib import OAuth2Session
 from django.views.generic.edit import View
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login as auth_login
-from corvee import settings
+from django.conf import settings
+from django.views.generic.list import ListView
+from .models import Persoon
 from .mixins import PermissionRequiredMixin
+from .corvee import Corvee
 import uuid
 
 
@@ -52,6 +54,9 @@ class LoginResponseView(View):
 
             auth_login(request, found_user)
 
+            # Sync the database with member-admin
+            Corvee.update_members(access_token['access_token'])
+
             return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
         else:
             return HttpResponseForbidden('IDP Login mislukt')
@@ -64,5 +69,16 @@ class LogoffView(PermissionRequiredMixin, View):
         return HttpResponse(content='Uitgelogd')
 
 
-class Main(PermissionRequiredMixin, TemplateView):
+class Main(PermissionRequiredMixin, ListView):
+    model = Persoon
     template_name = 'index.html'
+
+    def get_queryset(self):
+        day = self.kwargs.get('day', 'friday')
+        if day == 'friday':
+            queryset = Persoon.objects.filter(day_friday=True)
+        else:
+            queryset = Persoon.objects.filter(day_saturday=True)
+
+        queryset = queryset.order_by('-latest')
+        return queryset
