@@ -53,7 +53,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ object_list.0.first_name }} {{ object_list.0.last_name }}</h5>
               <a href="{% url 'acknowledge' object_list.0.id %}" class="card-link">Aftekenen</a>
-              <a href="#" class="card-link">Afwezig</a>
+              <a href="{% url 'absent' object_list.0.id %}" class="card-link">Afwezig</a>
             </div>
           </div>
         </div>
@@ -63,7 +63,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ object_list.1.first_name }} {{ object_list.1.last_name }}</h5>
               <a href="{% url 'acknowledge' object_list.1.id %}" class="card-link">Aftekenen</a>
-              <a href="#" class="card-link">Afwezig</a>
+              <a href="{% url 'absent' object_list.1.id %}" class="card-link">Afwezig</a>
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ object_list.2.first_name }} {{ object_list.2.last_name }}</h5>
               <a href="{% url 'acknowledge' object_list.2.id %}" class="card-link">Aftekenen</a>
-              <a href="#" class="card-link">Afwezig</a>
+              <a href="{% url 'absent' object_list.2.id %}" class="card-link">Afwezig</a>
             </div>
           </div>
         </div>

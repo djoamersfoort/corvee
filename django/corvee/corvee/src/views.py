@@ -9,7 +9,7 @@ from django.shortcuts import reverse
 from .models import Persoon
 from .mixins import PermissionRequiredMixin
 from .corvee import Corvee
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 
@@ -80,16 +80,26 @@ class Main(PermissionRequiredMixin, ListView):
         else:
             queryset = Persoon.objects.filter(day_saturday=True)
 
+        queryset = queryset.exclude(absent=date.today())
         queryset = queryset.order_by('latest')
         return queryset
 
 
 class Acknowledge(PermissionRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
 
+    def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))
 
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
         persoon.latest = datetime.now()
+        persoon.save()
+        return HttpResponseRedirect(url)
+
+
+class Absent(PermissionRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        url = request.META.get('HTTP_REFERER', reverse('main'))
+        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
+        persoon.absent = date.today()
         persoon.save()
         return HttpResponseRedirect(url)
