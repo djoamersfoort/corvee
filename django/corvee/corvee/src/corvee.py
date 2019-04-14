@@ -13,7 +13,6 @@ class Corvee:
             members = response.json()
             for dag in members:
                 for member in members[dag]:
-                    print(member['types'])
                     if not 'member' in member['types'] and not 'strippenkaart' in member['types']:
                         continue
 
@@ -30,6 +29,5 @@ class Corvee:
                         persoon.day_saturday = True
                     persoon.picture = member['photo']
                     persoon.save()
-                    print("Persoon: {0}, {1}".format(persoon, dag))
         else:
             print("Error getting members: {0}".format(response.content))
