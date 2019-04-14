@@ -73,11 +73,6 @@ class Main(PermissionRequiredMixin, ListView):
     model = Persoon
     template_name = 'index.html'
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context['day'] = self.kwargs.get('day', 'friday')
-        return context
-
     def get_queryset(self):
         day = self.kwargs.get('day', 'friday')
         if day == 'friday':
@@ -85,18 +80,33 @@ class Main(PermissionRequiredMixin, ListView):
         else:
             queryset = Persoon.objects.filter(day_saturday=True)
 
+        queryset = queryset.filter(selected=True)
         queryset = queryset.exclude(absent=date.today())
         queryset = queryset.order_by('latest')
         return queryset
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['day'] = self.kwargs.get('day', 'friday')
+        return context
+
 
 class Acknowledge(PermissionRequiredMixin, View):
-
     def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))
 
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
         persoon.latest = datetime.now()
+        persoon.selected = False
+        persoon.save()
+        return HttpResponseRedirect(url)
+
+
+class Insufficient(PermissionRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        url = request.META.get('HTTP_REFERER', reverse('main'))
+        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
+        persoon.selected = False
         persoon.save()
         return HttpResponseRedirect(url)
 
@@ -105,6 +115,49 @@ class Absent(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
+        persoon.selected = False
         persoon.absent = date.today()
         persoon.save()
+
+        day = self.kwargs.get('day', 'friday')
+
+        if day == 'friday':
+            queryset = Persoon.objects.filter(day_friday=True)
+        else:
+            queryset = Persoon.objects.filter(day_saturday=True)
+
+        queryset = queryset.exclude(absent=date.today())
+        queryset = queryset.exclude(selected=True)
+        queryset = queryset.order_by('latest')
+
+        person = queryset[0]
+        person.selected = True
+        person.save()
+
+        return HttpResponseRedirect(url)
+
+
+class Renew(PermissionRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        url = request.META.get('HTTP_REFERER', reverse('main'))
+        day = self.kwargs.get('day', 'friday')
+
+        if day == 'friday':
+            queryset = Persoon.objects.filter(day_friday=True)
+        else:
+            queryset = Persoon.objects.filter(day_saturday=True)
+
+        queryset = queryset.exclude(absent=date.today())
+        queryset = queryset.order_by('latest')
+
+        for person in queryset:
+            person.selected = False
+            person.save()
+
+        queryset = queryset[:3]
+
+        for person in queryset:
+            person.selected = True
+            person.save()
+
         return HttpResponseRedirect(url)

@@ -45,39 +45,23 @@
       </div>
 
       <div class="row mt-5 text-center">
-        <div class="col">
-          <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="{{ object_list.0.picture }}" alt="Foto van ...">
-            <div class="card-body">
-              <h5 class="card-title">{{ object_list.0.first_name }} {{ object_list.0.last_name }}</h5>
-              <a href="{% url 'acknowledge' object_list.0.id %}" class="card-link">Aftekenen</a>
-              <a href="{% url 'absent' object_list.0.id %}" class="card-link">Onvoldoende</a>
-              <a href="{% url 'absent' object_list.0.id %}" class="card-link">Afwezig</a>
+        {% for i in object_list %}
+          <div class="col">
+            <div class="card" style="width: 18rem;">
+              <img class="card-img-top" src="{{ i.picture }}" alt="Foto van ...">
+              <div class="card-body">
+                <h5 class="card-title">{{ i.first_name }} {{ i.last_name }}</h5>
+                <a href="{% url 'acknowledge' i.id %}" class="card-link">Aftekenen</a>
+                <a href="{% url 'insufficient' i.id %}" class="card-link">Onvoldoende</a>
+                <a href="{% url 'absent' day i.id %}" class="card-link">Afwezig</a>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col">
-          <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="{{ object_list.1.picture }}" alt="Foto van ...">
-            <div class="card-body">
-              <h5 class="card-title">{{ object_list.1.first_name }} {{ object_list.1.last_name }}</h5>
-              <a href="{% url 'acknowledge' object_list.1.id %}" class="card-link">Aftekenen</a>
-              <a href="{% url 'absent' object_list.1.id %}" class="card-link">Onvoldoende</a>
-              <a href="{% url 'absent' object_list.1.id %}" class="card-link">Afwezig</a>
-            </div>
+        {% empty %}
+          <div class="container text-center">
+            <a class="btn btn-primary" href="{% url 'renew' day %}">Maak Lijst Aan</a>
           </div>
-        </div>
-        <div class="col">
-          <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="{{ object_list.2.picture }}" alt="Foto van ...">
-            <div class="card-body">
-              <h5 class="card-title">{{ object_list.2.first_name }} {{ object_list.2.last_name }}</h5>
-              <a href="{% url 'acknowledge' object_list.2.id %}" class="card-link">Aftekenen</a>
-              <a href="{% url 'absent' object_list.2.id %}" class="card-link">Onvoldoende</a>
-              <a href="{% url 'absent' object_list.2.id %}" class="card-link">Afwezig</a>
-            </div>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </body>
