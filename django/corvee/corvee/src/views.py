@@ -5,9 +5,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout, login as auth_login
 from django.conf import settings
 from django.views.generic.list import ListView
+from django.shortcuts import reverse
 from .models import Persoon
 from .mixins import PermissionRequiredMixin
 from .corvee import Corvee
+from datetime import date
 import uuid
 
 
@@ -78,5 +80,16 @@ class Main(PermissionRequiredMixin, ListView):
         else:
             queryset = Persoon.objects.filter(day_saturday=True)
 
-        queryset = queryset.order_by('-latest')
+        queryset = queryset.order_by('latest')
         return queryset
+
+
+class Acknowledge(PermissionRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        url = request.META.get('HTTP_REFERER', reverse('main'))
+
+        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
+        persoon.latest = date.today()
+        persoon.save()
+        return HttpResponseRedirect(url)

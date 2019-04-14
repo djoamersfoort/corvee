@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', views.Main.as_view(), name='main'),
     path('main/<str:day>/', views.Main.as_view(), name='main'),
+    path('ack/<int:pk>', views.Acknowledge.as_view(), name='acknowledge'),
     path('logoff/', views.LogoffView.as_view(), name='logoff'),
     re_path(r'oauth/.*', views.LoginResponseView.as_view()),
     path('', views.LoginView.as_view(), name='login')

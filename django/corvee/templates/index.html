@@ -52,8 +52,7 @@
             <img class="card-img-top" src="{{ object_list.0.picture }}" alt="Foto van ...">
             <div class="card-body">
               <h5 class="card-title">{{ object_list.0.first_name }} {{ object_list.0.last_name }}</h5>
-              <a href="#" class="card-link">Aftekenen</a>
-              <a href="#" class="card-link">Negeren</a>
+              <a href="{% url 'acknowledge' object_list.0.id %}" class="card-link">Aftekenen</a>
               <a href="#" class="card-link">Afwezig</a>
             </div>
           </div>
@@ -63,8 +62,8 @@
             <img class="card-img-top" src="{{ object_list.1.picture }}" alt="Foto van ...">
             <div class="card-body">
               <h5 class="card-title">{{ object_list.1.first_name }} {{ object_list.1.last_name }}</h5>
-              <a href="#" class="card-link">Aftekenen</a>
-              <a href="#" class="card-link">Negeren</a>
+              <a href="{% url 'acknowledge' object_list.1.id %}" class="card-link">Aftekenen</a>
+              <a href="#" class="card-link">Afwezig</a>
             </div>
           </div>
         </div>
@@ -73,8 +72,8 @@
             <img class="card-img-top" src="{{ object_list.2.picture }}" alt="Foto van ...">
             <div class="card-body">
               <h5 class="card-title">{{ object_list.2.first_name }} {{ object_list.2.last_name }}</h5>
-              <a href="#" class="card-link">Aftekenen</a>
-              <a href="#" class="card-link">Negeren</a>
+              <a href="{% url 'acknowledge' object_list.2.id %}" class="card-link">Aftekenen</a>
+              <a href="#" class="card-link">Afwezig</a>
             </div>
           </div>
         </div>
@@ -82,9 +81,3 @@
     </div>
   </body>
 </html>
-
-<script>
-    function switchDay() {
-        console.log($("#switch"));
-    }
-</script>
