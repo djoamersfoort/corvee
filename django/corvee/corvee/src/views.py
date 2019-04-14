@@ -43,7 +43,7 @@ class LoginResponseView(View):
                 if required_role in user_profile['result']['accountType'].lower():
                     break
             else:
-                return HttpResponseForbidden('Verplichte rol niet toegekend')
+                return HttpResponseForbidden('Deze pagina is alleen toegankelijk voor bestuur en jeugdbestuur.')
 
             try:
                 found_user = User.objects.get(username=username)
