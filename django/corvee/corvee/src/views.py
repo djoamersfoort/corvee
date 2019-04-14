@@ -37,8 +37,6 @@ class LoginResponseView(View):
         if 'access_token' in access_token and access_token['access_token'] != '':
             user_profile = oauth.get(settings.IDP_API_URL).json()
             username = "idp-{0}".format(user_profile['result']['id'])
-            if settings.IDP_REQUIRED_ROLE not in user_profile['result']['accountType'].lower():
-                return HttpResponseForbidden('Verplichte rol niet toegekend')
 
             try:
                 found_user = User.objects.get(username=username)
