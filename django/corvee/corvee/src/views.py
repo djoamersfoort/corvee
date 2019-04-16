@@ -40,6 +40,7 @@ class LoginResponseView(View):
             user_profile = oauth.get(settings.IDP_API_URL).json()
             username = "idp-{0}".format(user_profile['result']['id'])
             for required_role in settings.IDP_REQUIRED_ROLES:
+                print(user_profile['result']['accountType'].lower())
                 if required_role in user_profile['result']['accountType'].lower():
                     break
             else:
@@ -93,6 +94,7 @@ class Main(PermissionRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['day'] = self.kwargs.get('day', 'friday')
+        context['page'] = 'main'
         return context
 
 
@@ -114,6 +116,7 @@ class Leden(PermissionRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['day'] = self.kwargs.get('day', 'friday')
+        context['page'] = 'leden'
         return context
 
 

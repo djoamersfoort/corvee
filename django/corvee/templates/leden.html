@@ -1,68 +1,31 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>DJO Corvee</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
-    <link rel="stylesheet" href="https://bootswatch.com/4/materia/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="{% static 'script.js' %}"></script>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
-      <a class="navbar-brand" href="#">DJO Corvee</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="nav">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'main' %}">Dashboard</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Ledenlijst</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" onclick="$(this).html(($(this).html()=='Instellingen'?'Instellingen?':'Instellingen!'))">Instellingen</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <div class="container mt-5">
-      <div class="switch-label {{ day }}">
-        <span>Vrijdag</span>
-        <div class="material-switch">
-          <a class="bg-primary" href="{% url 'leden' %}{% if day == "friday" %}saturday{% endif %}"></a>
-        </div>
-        <span>Zaterdag</span>
-      </div>
-
-      <div class="row mt-5 text-center">
-        {% for i in object_list %}
-          <div class="col">
-            <div class="card" style="width: 14rem;">
-              <img class="card-img-top" src="{{ i.picture }}" alt="Foto van ...">
-              <div class="card-body">
-                <h5 class="card-title">{{ i.first_name }} {{ i.last_name }}</h5>
-                <div>{{ i.latest }}</div>
-                {% if i.selected %}<div class="text-primary">aan de beurt</div>{% endif %}
-                {% if i.absent %}<div class="text-danger">afwezig</div>{% endif %}
-              </div>
-            </div>
-          </div>
-        {% empty %}
-          <div class="container text-center">
-            <a class="btn btn-primary" href="{% url 'renew' day %}">Maak Lijst Aan</a>
-          </div>
-        {% endfor %}
-      </div>
+{% block content %}
+<div class="container mt-5">
+  <div class="switch-label {{ day }}">
+    <span>Vrijdag</span>
+    <div class="material-switch">
+      <a class="bg-primary" href="{% url 'leden' %}{% if day == "friday" %}saturday{% endif %}"></a>
     </div>
-  </body>
-</html>
+    <span>Zaterdag</span>
+  </div>
+
+  <div class="row mt-5 text-center">
+    {% for person in object_list %}
+      <div class="col">
+        <div class="card" style="width: 14rem;">
+          <img class="card-img-top" src="{{ person.picture }}" alt="Foto van ...">
+          <div class="card-body">
+            <h5 class="card-title">{{ person.first_name }} {{ person.last_name }}</h5>
+            <div>{{ person.latest }}</div>
+            {% if person.selected %}<div class="text-primary">Aan de beurt</div>{% endif %}
+            {% if person.is_absent %}<div class="text-danger">Afwezig</div>{% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

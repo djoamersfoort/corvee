@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+from datetime import date
 
 
 class Persoon(models.Model):
@@ -7,6 +8,9 @@ class Persoon(models.Model):
     class Meta:
         ordering = ["first_name", "last_name"]
         verbose_name_plural = "Personen"
+
+    def is_absent(self):
+        return self.absent == date.today()
 
     def __str__(self):
         return "{0} {1}".format(self.first_name, self.last_name)
