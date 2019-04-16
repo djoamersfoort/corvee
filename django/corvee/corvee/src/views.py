@@ -40,7 +40,6 @@ class LoginResponseView(View):
             user_profile = oauth.get(settings.IDP_API_URL).json()
             username = "idp-{0}".format(user_profile['result']['id'])
             for required_role in settings.IDP_REQUIRED_ROLES:
-                print(user_profile['result']['accountType'].lower())
                 if required_role in user_profile['result']['accountType'].lower():
                     break
             else:
