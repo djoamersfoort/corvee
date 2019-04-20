@@ -10,6 +10,8 @@ class Corvee:
         response = requests.get(settings.LEDEN_ADMIN_API_URL,
                                 headers={'Authorization': 'IDP {0}'.format(access_token)})
         if response.ok:
+            Persoon.objects.all().update(marked_for_deletion=True)
+
             members = response.json()
             for dag in members:
                 for member in members[dag]:
@@ -28,6 +30,11 @@ class Corvee:
                     if dag == 'zaterdag':
                         persoon.day_saturday = True
                     persoon.picture = member['photo']
+                    # Disable deletion mark
+                    persoon.marked_for_deletion = False
                     persoon.save()
+
+            # Delete members not updated / present in member administration
+            Persoon.objects.filter(marked_for_deletion=True).delete()
         else:
             print("Error getting members: {0}".format(response.content))

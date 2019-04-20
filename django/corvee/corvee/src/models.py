@@ -23,3 +23,4 @@ class Persoon(models.Model):
     latest = models.DateTimeField(default=now, blank=False, editable=True)
     absent = models.DateField(blank=True, null=True, default=None)
     selected = models.BooleanField(null=False, default=False)
+    marked_for_deletion = models.BooleanField(null=False, default=False)
