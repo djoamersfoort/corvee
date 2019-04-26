@@ -179,6 +179,8 @@ class Renew(PermissionRequiredMixin, View):
         queryset = queryset.order_by('latest')
         queryset.update(selected=False)
         queryset = queryset[:3]
-        queryset.update(selected=True)
+        for persoon in queryset:
+            persoon.selected = True
+            persoon.save()
 
         return HttpResponseRedirect(url)
