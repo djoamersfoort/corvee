@@ -10,7 +10,7 @@ class Corvee:
         response = requests.get(settings.LEDEN_ADMIN_API_URL,
                                 headers={'Authorization': 'IDP {0}'.format(access_token)})
         if response.ok:
-            Persoon.objects.all().update(marked_for_deletion=True)
+            Persoon.objects.all().update(marked_for_deletion=True, day_friday=False, day_saturday=False)
 
             members = response.json()
             for dag in members:
