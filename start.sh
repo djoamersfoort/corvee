@@ -18,7 +18,7 @@ exec gunicorn corvee.wsgi:application \
     --name corvee \
     --bind 0.0.0.0:8000 \
     --workers 3 \
-    --log-level=debug \
+    --log-level=info \
     --log-file=/srv/logs/gunicorn.log \
     --access-logfile=/srv/logs/access.log \
     "$@"
