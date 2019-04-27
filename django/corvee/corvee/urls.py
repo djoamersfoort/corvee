@@ -25,6 +25,7 @@ urlpatterns = [
     path('main/<str:day>/', views.Main.as_view(), name='main'),
     path('ack/<int:pk>', views.Acknowledge.as_view(), name='acknowledge'),
     path('insuff/<int:pk>', views.Insufficient.as_view(), name='insufficient'),
+    path('punish/<int:pk>', views.Punishment.as_view(), name='punishment'),
     path('absent/<str:day>/<int:pk>/', views.Absent.as_view(), name='absent'),
     path('renew/<str:day>/', views.Renew.as_view(), name='renew'),
     path('logoff/', views.LogoffView.as_view(), name='logoff'),

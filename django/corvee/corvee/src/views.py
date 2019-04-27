@@ -138,6 +138,14 @@ class Insufficient(PermissionRequiredMixin, View):
         persoon.save()
         return HttpResponseRedirect(url)
 
+class Punishment(PermissionRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        url = request.META.get('HTTP_REFERER', reverse('main'))
+        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
+        persoon.latest = date(1900, 1, 1)
+        persoon.selected = False
+        persoon.save()
+        return HttpResponseRedirect(url)
 
 class Absent(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
