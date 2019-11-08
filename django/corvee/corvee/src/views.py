@@ -6,11 +6,23 @@ from django.contrib.auth import logout, login as auth_login
 from django.conf import settings
 from django.views.generic.list import ListView
 from django.shortcuts import reverse
-from .models import Persoon
+from .models import Persoon, AuditLog
 from .mixins import PermissionRequiredMixin
 from .corvee import Corvee
 from datetime import datetime, date
 import uuid
+
+
+class Auditor:
+
+    @staticmethod
+    def audit(first_name, last_name, action):
+        audit = AuditLog()
+        audit.first_name = first_name
+        audit.last_name = last_name
+        audit.datetime = date.today()
+        audit.action = action
+        audit.save()
 
 
 class LoginView(View):
@@ -127,6 +139,9 @@ class Acknowledge(PermissionRequiredMixin, View):
         persoon.latest = datetime.now()
         persoon.selected = False
         persoon.save()
+
+        Auditor.audit(persoon.first_name, persoon.last_name, 'acknowledged')
+
         return HttpResponseRedirect(url)
 
 
@@ -136,7 +151,11 @@ class Insufficient(PermissionRequiredMixin, View):
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
         persoon.selected = False
         persoon.save()
+
+        Auditor.audit(persoon.first_name, persoon.last_name, 'insufficient')
+
         return HttpResponseRedirect(url)
+
 
 class Punishment(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -145,7 +164,11 @@ class Punishment(PermissionRequiredMixin, View):
         persoon.latest = date(1900, 1, 1)
         persoon.selected = False
         persoon.save()
+
+        Auditor.audit(persoon.first_name, persoon.last_name, 'punishment')
+
         return HttpResponseRedirect(url)
+
 
 class Absent(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -154,6 +177,8 @@ class Absent(PermissionRequiredMixin, View):
         persoon.selected = False
         persoon.absent = date.today()
         persoon.save()
+
+        Auditor.audit(persoon.first_name, persoon.last_name, 'absent')
 
         day = self.kwargs.get('day', 'friday')
 

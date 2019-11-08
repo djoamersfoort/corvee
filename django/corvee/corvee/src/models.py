@@ -24,3 +24,14 @@ class Persoon(models.Model):
     absent = models.DateField(blank=True, null=True, default=None)
     selected = models.BooleanField(null=False, default=False)
     marked_for_deletion = models.BooleanField(null=False, default=False)
+
+
+class AuditLog(models.Model):
+
+    def __str__(self):
+        return "{0} {1} {2} {3}".format(self.datetime, self.first_name, self.last_name, self.action)
+
+    datetime = models.DateField(blank=True, null=True, default=None)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    action = models.CharField(max_length=20)
