@@ -1,5 +1,5 @@
 django>=2.2
 requests-oauthlib
 requests
-gunicorn
+gunicorn==19.9.0
 mysqlclient

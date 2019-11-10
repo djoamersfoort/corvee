@@ -16,12 +16,13 @@ import uuid
 class Auditor:
 
     @staticmethod
-    def audit(first_name, last_name, action):
+    def audit(first_name, last_name, action, user):
         audit = AuditLog()
         audit.first_name = first_name
         audit.last_name = last_name
         audit.datetime = date.today()
         audit.action = action
+        audit.performed_by = f"{user.first_name} {user.last_name}"
         audit.save()
 
 
@@ -140,7 +141,7 @@ class Acknowledge(PermissionRequiredMixin, View):
         persoon.selected = False
         persoon.save()
 
-        Auditor.audit(persoon.first_name, persoon.last_name, 'acknowledged')
+        Auditor.audit(persoon.first_name, persoon.last_name, 'acknowledged', request.user)
 
         return HttpResponseRedirect(url)
 
@@ -152,7 +153,7 @@ class Insufficient(PermissionRequiredMixin, View):
         persoon.selected = False
         persoon.save()
 
-        Auditor.audit(persoon.first_name, persoon.last_name, 'insufficient')
+        Auditor.audit(persoon.first_name, persoon.last_name, 'insufficient', request.user)
 
         return HttpResponseRedirect(url)
 
@@ -165,7 +166,7 @@ class Punishment(PermissionRequiredMixin, View):
         persoon.selected = False
         persoon.save()
 
-        Auditor.audit(persoon.first_name, persoon.last_name, 'punishment')
+        Auditor.audit(persoon.first_name, persoon.last_name, 'punishment', request.user)
 
         return HttpResponseRedirect(url)
 
@@ -178,7 +179,7 @@ class Absent(PermissionRequiredMixin, View):
         persoon.absent = date.today()
         persoon.save()
 
-        Auditor.audit(persoon.first_name, persoon.last_name, 'absent')
+        Auditor.audit(persoon.first_name, persoon.last_name, 'absent', request.user)
 
         day = self.kwargs.get('day', 'friday')
 
