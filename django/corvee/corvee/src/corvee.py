@@ -1,12 +1,28 @@
-from .models import Persoon
+from .models import Persoon, LastSync
 from django.conf import settings
+from datetime import date
 import requests
 
 
 class Corvee:
 
     @staticmethod
+    def is_sync_needed():
+        try:
+            last_sync = LastSync.objects.get()
+        except LastSync.DoesNotExist:
+            last_sync = LastSync()
+
+        sync_needed = last_sync.last_sync_date != date.today()
+        last_sync.last_sync_date = date.today()
+        last_sync.save()
+        return sync_needed
+
+    @staticmethod
     def update_members(access_token):
+        if not Corvee.is_sync_needed():
+            return
+
         response = requests.get(settings.LEDEN_ADMIN_API_URL,
                                 headers={'Authorization': 'IDP {0}'.format(access_token)})
         if response.ok:
