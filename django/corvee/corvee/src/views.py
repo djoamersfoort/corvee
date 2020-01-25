@@ -175,6 +175,11 @@ class Absent(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
+
+        if request.user.first_name.lower() == persoon.first_name.lower() and request.user.last_name.lower() == persoon.last_name.lower():
+            Auditor.audit(persoon.first_name, persoon.last_name, 'absent_self', request.user)
+            return HttpResponseRedirect(url)
+
         persoon.selected = False
         persoon.absent = date.today()
         persoon.save()
