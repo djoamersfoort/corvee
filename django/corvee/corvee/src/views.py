@@ -9,7 +9,7 @@ from django.shortcuts import reverse
 from .models import Persoon, AuditLog
 from .mixins import PermissionRequiredMixin
 from .corvee import Corvee
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import uuid
 
 
@@ -194,12 +194,14 @@ class Absent(PermissionRequiredMixin, View):
             queryset = Persoon.objects.filter(day_saturday=True)
 
         queryset = queryset.exclude(absent=date.today())
+        queryset = queryset.exclude(latest__gt=date.today() - timedelta(days=settings.ABSOLVE_DAYS))
         queryset = queryset.exclude(selected=True)
         queryset = queryset.order_by('latest')
 
-        person = queryset[0]
-        person.selected = True
-        person.save()
+        if len(queryset) > 0:
+            person = queryset[0]
+            person.selected = True
+            person.save()
 
         return HttpResponseRedirect(url)
 
@@ -215,8 +217,10 @@ class Renew(PermissionRequiredMixin, View):
             queryset = Persoon.objects.filter(day_saturday=True)
 
         queryset = queryset.exclude(absent=date.today())
+        queryset = queryset.exclude(latest__gt=date.today() - timedelta(days=settings.ABSOLVE_DAYS))
         queryset = queryset.order_by('latest')
         queryset.update(selected=False)
+
         queryset = queryset[:3]
         for persoon in queryset:
             persoon.selected = True
