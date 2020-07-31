@@ -5,8 +5,8 @@ on:
     # Publish `master` as Docker `latest` image.
     branches:
       - master
-  # Run tests for any PRs.
-  pull_request:
+  schedule:
+    - cron:  '0 8 1 * *'
 
 env:
   IMAGE_NAME: corvee
