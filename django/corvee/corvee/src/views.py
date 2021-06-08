@@ -51,9 +51,9 @@ class LoginResponseView(View):
 
         if 'access_token' in access_token and access_token['access_token'] != '':
             user_profile = oauth.get(settings.IDP_API_URL).json()
-            username = "idp-{0}".format(user_profile['result']['id'])
+            username = "idp-{0}".format(user_profile['id'])
             for required_role in settings.IDP_REQUIRED_ROLES:
-                if required_role in user_profile['result']['accountType'].lower():
+                if required_role in user_profile['accountType'].lower():
                     break
             else:
                 return HttpResponseForbidden('Deze pagina is alleen toegankelijk voor bestuur en jeugdbestuur.')
@@ -64,9 +64,9 @@ class LoginResponseView(View):
                 found_user = User()
                 found_user.username = username
                 found_user.password = uuid.uuid4()
-                found_user.email = user_profile['result']['email']
-                found_user.first_name = user_profile['result']['firstName']
-                found_user.last_name = user_profile['result']['lastName']
+                found_user.email = user_profile['email']
+                found_user.first_name = user_profile['firstName']
+                found_user.last_name = user_profile['lastName']
                 found_user.is_superuser = True
                 found_user.save()
 
