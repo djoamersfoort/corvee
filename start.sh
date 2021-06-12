@@ -12,6 +12,9 @@ tail -n 0 -f /srv/logs/*.log &
 # Start nginx
 nginx
 
+# Start jobs in a loop
+sh /jobs.sh &
+
 # Start Gunicorn processes
 echo Starting Gunicorn.
 exec gunicorn corvee.wsgi:application \
