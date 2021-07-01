@@ -23,4 +23,5 @@ COPY django/corvee/ /srv/corvee/
 # Copy entrypoint script into the image
 WORKDIR /srv/corvee
 COPY start.sh /
+COPY jobs.sh /
 ENTRYPOINT ["/start.sh"]
