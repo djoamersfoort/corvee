@@ -12,7 +12,7 @@ class Persoon(models.Model):
         return self.absent == date.today()
 
     def __str__(self):
-        return "{0} {1}".format(self.first_name, self.last_name)
+        return f"{self.first_name} {self.last_name} : {self.selected}"
 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)

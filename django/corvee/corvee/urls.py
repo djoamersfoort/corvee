@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from .src import views
+from .src import api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('absent/<str:day>/<int:pk>/', views.Absent.as_view(), name='absent'),
     path('renew/<str:day>/', views.Renew.as_view(), name='renew'),
     path('logoff/', views.LogoffView.as_view(), name='logoff'),
+    path('api/v1/selected', api.SelectedV1.as_view(), name='selected'),
     re_path(r'oauth/.*', views.LoginResponseView.as_view()),
     path('', views.LoginView.as_view(), name='login')
 ]
