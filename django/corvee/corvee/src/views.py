@@ -56,7 +56,8 @@ class LoginResponseView(View):
                 if required_role in user_profile['accountType'].lower():
                     break
             else:
-                return HttpResponseForbidden('Deze pagina is alleen toegankelijk voor bestuur en jeugdbestuur.')
+                roles = ','.join(settings.IDP_REQUIRED_ROLES)
+                return HttpResponseForbidden(f'Deze pagina is alleen toegankelijk voor de volgende rollen: {roles}.')
 
             try:
                 found_user = User.objects.get(username=username)
@@ -64,7 +65,6 @@ class LoginResponseView(View):
                 found_user = User()
                 found_user.username = username
                 found_user.password = uuid.uuid4()
-                found_user.email = user_profile['email']
                 found_user.first_name = user_profile['firstName']
                 found_user.last_name = user_profile['lastName']
                 found_user.is_superuser = True
