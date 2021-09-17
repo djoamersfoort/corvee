@@ -52,12 +52,6 @@ class LoginResponseView(View):
         if 'access_token' in access_token and access_token['access_token'] != '':
             user_profile = oauth.get(settings.IDP_API_URL).json()
             username = "idp-{0}".format(user_profile['id'])
-            for required_role in settings.IDP_REQUIRED_ROLES:
-                if required_role in user_profile['accountType'].lower():
-                    break
-            else:
-                roles = ','.join(settings.IDP_REQUIRED_ROLES)
-                return HttpResponseForbidden(f'Deze pagina is alleen toegankelijk voor de volgende rollen: {roles}.')
 
             try:
                 found_user = User.objects.get(username=username)
@@ -69,6 +63,14 @@ class LoginResponseView(View):
                 found_user.last_name = user_profile['lastName']
                 found_user.is_superuser = True
                 found_user.save()
+            
+            if not found_user.is_staff:
+                for required_role in settings.IDP_REQUIRED_ROLES:
+                    if required_role in user_profile['accountType'].lower():
+                        break
+                else:
+                    roles = ','.join(settings.IDP_REQUIRED_ROLES)
+                    return HttpResponseForbidden(f'Deze pagina is alleen toegankelijk voor de volgende rollen: {roles}.')
 
             auth_login(request, found_user)
 
