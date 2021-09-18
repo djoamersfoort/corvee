@@ -4,6 +4,11 @@
 {% block content %}
 <div class="container mt-5">
   <div class="row mt-5 text-center">
+    <div class="container text-center">
+      <a class="btn btn-primary" href="{% url 'renew' %}">Maak Lijst Aan</a>
+    </div>
+  </div>
+  <div class="row mt-5 text-center">
     {% for person in object_list %}
       <div class="col" style="min-width: 18rem; width: 18rem;">
         <div class="card" style="min-width: 18rem; width: 18rem;">
@@ -15,10 +20,6 @@
             <a href="{% url 'absent' person.id %}" class="card-link">Afwezig</a>
           </div>
         </div>
-      </div>
-    {% empty %}
-      <div class="container text-center">
-        <a class="btn btn-primary" href="{% url 'renew' %}">Maak Lijst Aan</a>
       </div>
     {% endfor %}
   </div>
