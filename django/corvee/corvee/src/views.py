@@ -94,20 +94,10 @@ class Main(PermissionRequiredMixin, ListView):
     template_name = 'index.html'
 
     def get_queryset(self):
-        day = self.kwargs.get('day', 'friday')
-        if day == 'friday':
-            queryset = Persoon.objects.filter(day_friday=True)
-        else:
-            queryset = Persoon.objects.filter(day_saturday=True)
-
-        queryset = queryset.filter(selected=True)
-        queryset = queryset.exclude(absent=date.today())
-        queryset = queryset.order_by('latest')
-        return queryset
+        return Persoon.objects.filter(selected=True).order_by('latest')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['day'] = self.kwargs.get('day', 'friday')
         context['page'] = 'main'
         return context
 
@@ -123,9 +113,7 @@ class Leden(PermissionRequiredMixin, ListView):
         else:
             queryset = Persoon.objects.filter(day_saturday=True)
 
-        queryset = queryset.order_by('latest')
-
-        return queryset
+        return queryset.order_by('latest')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
@@ -188,22 +176,7 @@ class Absent(PermissionRequiredMixin, View):
 
         Auditor.audit(persoon.first_name, persoon.last_name, 'absent', request.user)
 
-        day = self.kwargs.get('day', 'friday')
-
-        if day == 'friday':
-            queryset = Persoon.objects.filter(day_friday=True)
-        else:
-            queryset = Persoon.objects.filter(day_saturday=True)
-
-        queryset = queryset.exclude(absent=date.today())
-        queryset = queryset.exclude(latest__gt=date.today() - timedelta(days=settings.ABSOLVE_DAYS))
-        queryset = queryset.exclude(selected=True)
-        queryset = queryset.order_by('latest')
-
-        if len(queryset) > 0:
-            person = queryset[0]
-            person.selected = True
-            person.save()
+        Corvee.renew_list()
 
         return HttpResponseRedirect(url)
 
@@ -211,21 +184,7 @@ class Absent(PermissionRequiredMixin, View):
 class Renew(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))
-        day = self.kwargs.get('day', 'friday')
 
-        if day == 'friday':
-            queryset = Persoon.objects.filter(day_friday=True)
-        else:
-            queryset = Persoon.objects.filter(day_saturday=True)
-
-        queryset = queryset.exclude(absent=date.today())
-        queryset = queryset.exclude(latest__gt=date.today() - timedelta(days=settings.ABSOLVE_DAYS))
-        queryset = queryset.order_by('latest')
-        queryset.update(selected=False)
-
-        queryset = queryset[:3]
-        for persoon in queryset:
-            persoon.selected = True
-            persoon.save()
+        Corvee.renew_list()
 
         return HttpResponseRedirect(url)

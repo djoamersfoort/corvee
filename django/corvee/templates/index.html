@@ -3,14 +3,6 @@
 
 {% block content %}
 <div class="container mt-5">
-  <div class="switch-label {{ day }}">
-    <span>Vrijdag</span>
-    <div class="material-switch">
-      <a class="bg-primary" href="{% url 'main' %}{% if day == 'friday' %}saturday{% endif %}"></a>
-    </div>
-    <span>Zaterdag</span>
-  </div>
-
   <div class="row mt-5 text-center">
     {% for person in object_list %}
       <div class="col" style="min-width: 18rem; width: 18rem;">
@@ -20,13 +12,13 @@
             <h5 class="card-title">{{ person.first_name }} {{ person.last_name }}</h5>
             <a href="{% url 'acknowledge' person.id %}" class="card-link">Aftekenen</a>
             <a href="{% url 'insufficient' person.id %}" class="card-link">Onvoldoende</a>
-            <a href="{% url 'absent' day person.id %}" class="card-link">Afwezig</a>
+            <a href="{% url 'absent' person.id %}" class="card-link">Afwezig</a>
           </div>
         </div>
       </div>
     {% empty %}
       <div class="container text-center">
-        <a class="btn btn-primary" href="{% url 'renew' day %}">Maak Lijst Aan</a>
+        <a class="btn btn-primary" href="{% url 'renew' %}">Maak Lijst Aan</a>
       </div>
     {% endfor %}
   </div>
