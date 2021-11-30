@@ -23,10 +23,10 @@ class PresenceApiClient:
         else:
             self.oauth.token = self.token
 
-    def is_present(self, person: Persoon, day: str) -> bool:
+    def is_present(self, person: Persoon, day: str, pod: str) -> bool:
         if not self.oauth:
             self._authenticate()
-        response = self.oauth.post(f'{self.api_url}/{day}/{person.idp_user_id}')
+        response = self.oauth.post(f'{self.api_url}/{day}/{pod}/{person.idp_user_id}')
         if response.ok:
             return response.json()['present']
         return False

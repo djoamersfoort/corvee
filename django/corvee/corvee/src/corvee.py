@@ -2,6 +2,7 @@ from .models import Persoon, LastSync
 from django.conf import settings
 from datetime import date, timedelta
 from .presence_api_client import PresenceApiClient
+import datetime
 import requests
 
 
@@ -32,7 +33,7 @@ class Corvee:
             members = response.json()
             for dag in members:
                 for member in members[dag]:
-                    if not 'member' in member['types'] and not 'strippenkaart' in member['types']:
+                    if 'member' not in member['types'] and 'strippenkaart' not in member['types']:
                         continue
 
                     try:
@@ -58,17 +59,29 @@ class Corvee:
             print("Error getting members: {0}".format(response.content))
 
     @staticmethod
+    def _get_pod():
+        pod = 'm'
+        hour = datetime.datetime.now().hour
+        if hour >= 13:
+            pod = 'a'
+        elif hour >= 18:
+            pod = 'e'
+        return pod
+
+    @staticmethod
     def renew_list():
         weekday = date.today().weekday()
         day = 'fri' if weekday == 4 else 'sat'
         if weekday not in [4, 5]:
             return
-        presence = PresenceApiClient(client_id=settings.PRESENCE_CLIENT_ID, client_secret=settings.PRESENCE_CLIENT_SECRET,
+        pod = Corvee._get_pod()
+        presence = PresenceApiClient(client_id=settings.PRESENCE_CLIENT_ID,
+                                     client_secret=settings.PRESENCE_CLIENT_SECRET,
                                      token_url=settings.IDP_TOKEN_URL, presence_api_url=settings.PRESENCE_API_URL)
         queryset = Persoon.objects.all()
         for persoon in queryset:
             persoon.selected = False
-            if not presence.is_present(persoon, day):
+            if not presence.is_present(persoon, day, pod):
                 persoon.absent = date.today()
             persoon.save()
 

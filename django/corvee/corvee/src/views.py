@@ -9,7 +9,7 @@ from django.shortcuts import reverse
 from .models import Persoon, AuditLog
 from .mixins import PermissionRequiredMixin
 from .corvee import Corvee
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 import uuid
 
 
