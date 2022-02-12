@@ -62,10 +62,10 @@ class Corvee:
     def _get_pod():
         pod = 'm'
         hour = datetime.datetime.now().hour
-        if hour >= 13:
-            pod = 'a'
-        elif hour >= 18:
+        if hour >= 18:
             pod = 'e'
+        elif hour >= 13:
+            pod = 'a'
         return pod
 
     @staticmethod
