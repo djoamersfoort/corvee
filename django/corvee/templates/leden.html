@@ -3,14 +3,6 @@
 
 {% block content %}
 <div class="container mt-5">
-  <div class="switch-label {{ day }}">
-    <span>Vrijdag</span>
-    <div class="material-switch">
-      <a class="bg-primary" href="{% url 'leden' %}{% if day == 'friday' %}saturday{% endif %}"></a>
-    </div>
-    <span>Zaterdag</span>
-  </div>
-
   <div class="row mt-5 text-center">
     {% for person in object_list %}
       <div class="col" style="min-width: 14rem; width: 14rem;">

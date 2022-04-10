@@ -18,8 +18,6 @@ class Persoon(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     picture = models.TextField(blank=True, null=True, verbose_name='Foto', editable=True)
-    day_friday = models.BooleanField(null=False, default=False)
-    day_saturday = models.BooleanField(null=False, default=False)
     latest = models.DateTimeField(default=now, blank=False, editable=True)
     absent = models.DateField(blank=True, null=True, default=None)
     selected = models.BooleanField(null=False, default=False)

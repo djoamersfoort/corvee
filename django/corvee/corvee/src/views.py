@@ -107,17 +107,10 @@ class Leden(PermissionRequiredMixin, ListView):
     template_name = 'leden.html'
 
     def get_queryset(self):
-        day = self.kwargs.get('day', 'friday')
-        if day == 'friday':
-            queryset = Persoon.objects.filter(day_friday=True)
-        else:
-            queryset = Persoon.objects.filter(day_saturday=True)
-
-        return queryset.order_by('latest')
+        return Persoon.objects.all().order_by('latest')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['day'] = self.kwargs.get('day', 'friday')
         context['page'] = 'leden'
         return context
 
