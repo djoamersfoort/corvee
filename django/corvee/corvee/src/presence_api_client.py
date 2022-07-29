@@ -1,7 +1,10 @@
-from .models import Persoon
-from requests_oauthlib import OAuth2Session
-from oauthlib.oauth2 import BackendApplicationClient
+from typing import List
+
 from django.core.cache import cache
+from oauthlib.oauth2 import BackendApplicationClient
+from requests_oauthlib import OAuth2Session
+
+from .models import Persoon
 
 
 class PresenceApiClient:
@@ -26,7 +29,15 @@ class PresenceApiClient:
     def is_present(self, person: Persoon, day: str, pod: str) -> bool:
         if not self.oauth:
             self._authenticate()
-        response = self.oauth.post(f'{self.api_url}/{day}/{pod}/{person.idp_user_id}')
+        response = self.oauth.post(f'{self.api_url}/api/v2/is_present/{day}/{pod}/{person.idp_user_id}')
         if response.ok:
             return response.json()['present']
         return False
+
+    def are_present(self, day: str, pod: str) -> List[str]:
+        if not self.oauth:
+            self._authenticate()
+        response = self.oauth.post(f'{self.api_url}/api/v2/are_present/{day}/{pod}')
+        if response.ok:
+            return response.json()['members']
+        return []

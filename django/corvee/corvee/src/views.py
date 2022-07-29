@@ -1,16 +1,19 @@
-from requests_oauthlib import OAuth2Session
-from django.views.generic.edit import View
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from django.contrib.auth.models import User
-from django.contrib.auth import logout, login as auth_login
-from django.conf import settings
-from django.views.generic.list import ListView
-from django.shortcuts import reverse
-from .models import Persoon, AuditLog
-from .mixins import PermissionRequiredMixin
-from .corvee import Corvee
-from datetime import datetime, date
 import uuid
+from datetime import datetime
+
+from django.conf import settings
+from django.contrib.auth import logout, login as auth_login
+from django.contrib.auth.models import User
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.shortcuts import reverse
+from django.utils import timezone
+from django.views.generic.edit import View
+from django.views.generic.list import ListView
+from requests_oauthlib import OAuth2Session
+
+from .corvee import Corvee
+from .mixins import PermissionRequiredMixin
+from .models import Persoon, AuditLog
 
 
 class Auditor:
@@ -20,7 +23,7 @@ class Auditor:
         audit = AuditLog()
         audit.first_name = first_name
         audit.last_name = last_name
-        audit.datetime = date.today()
+        audit.datetime = timezone.now().date()
         audit.action = action
         audit.performed_by = f"{user.first_name} {user.last_name}"
         audit.save()
@@ -122,7 +125,7 @@ class Acknowledge(PermissionRequiredMixin, View):
         url = request.META.get('HTTP_REFERER', reverse('main'))
 
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-        persoon.latest = datetime.now()
+        persoon.latest = timezone.now()
         persoon.selected = False
         persoon.save()
 
@@ -147,7 +150,7 @@ class Punishment(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-        persoon.latest = date(1900, 1, 1)
+        persoon.latest = timezone.make_aware(datetime(1900, 1, 1, 0, 0, 0))
         persoon.selected = False
         persoon.save()
 
@@ -160,13 +163,8 @@ class Absent(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         url = request.META.get('HTTP_REFERER', reverse('main'))
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-
-        if request.user.first_name.lower() == persoon.first_name.lower() and request.user.last_name.lower() == persoon.last_name.lower():
-            Auditor.audit(persoon.first_name, persoon.last_name, 'absent_self', request.user)
-            return HttpResponseRedirect(url)
-
         persoon.selected = False
-        persoon.absent = date.today()
+        persoon.absent = True
         persoon.save()
 
         Auditor.audit(persoon.first_name, persoon.last_name, 'absent', request.user)

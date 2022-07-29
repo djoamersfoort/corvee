@@ -1,15 +1,11 @@
 from django.db import models
 from django.utils.timezone import now
-from datetime import date
 
 
 class Persoon(models.Model):
     class Meta:
         ordering = ["first_name", "last_name"]
         verbose_name_plural = "Personen"
-
-    def is_absent(self):
-        return self.absent == date.today()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} : {self.selected}"
@@ -19,7 +15,7 @@ class Persoon(models.Model):
     last_name = models.CharField(max_length=255)
     picture = models.TextField(blank=True, null=True, verbose_name='Foto', editable=True)
     latest = models.DateTimeField(default=now, blank=False, editable=True)
-    absent = models.DateField(blank=True, null=True, default=None)
+    absent = models.BooleanField(null=False, blank=False, default=False)
     selected = models.BooleanField(null=False, default=False)
     marked_for_deletion = models.BooleanField(null=False, default=False)
 

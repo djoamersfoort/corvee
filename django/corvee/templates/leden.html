@@ -13,7 +13,7 @@
             <div>{{ person.latest }}</div>
             <a href="{% url 'punishment' person.id %}" class="card-link">Strafcorvee</a>
             {% if person.selected %}<div class="text-primary">Aan de beurt</div>{% endif %}
-            {% if person.is_absent %}<div class="text-danger">Afwezig</div>{% endif %}
+            {% if person.absent %}<div class="text-danger">Afwezig</div>{% endif %}
           </div>
         </div>
       </div>

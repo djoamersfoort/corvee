@@ -1,9 +1,11 @@
-from .models import Persoon, LastSync
-from django.conf import settings
 from datetime import date, timedelta
-from .presence_api_client import PresenceApiClient
-import datetime
+
 import requests
+from django.conf import settings
+from django.utils import timezone
+
+from .models import Persoon, LastSync
+from .presence_api_client import PresenceApiClient
 
 
 class Corvee:
@@ -56,7 +58,7 @@ class Corvee:
     @staticmethod
     def _get_pod():
         pod = 'm'
-        hour = datetime.datetime.now().hour
+        hour = timezone.now().hour
         if hour >= 18:
             pod = 'e'
         elif hour >= 13:
@@ -65,7 +67,7 @@ class Corvee:
 
     @staticmethod
     def renew_list():
-        weekday = date.today().weekday()
+        weekday = timezone.now().weekday()
         day = 'fri' if weekday == 4 else 'sat'
         if weekday not in [4, 5]:
             return
@@ -73,15 +75,16 @@ class Corvee:
         presence = PresenceApiClient(client_id=settings.PRESENCE_CLIENT_ID,
                                      client_secret=settings.PRESENCE_CLIENT_SECRET,
                                      token_url=settings.IDP_TOKEN_URL, presence_api_url=settings.PRESENCE_API_URL)
+        present_members = presence.are_present(day, pod)
+        print(present_members)
         queryset = Persoon.objects.all()
         for persoon in queryset:
             persoon.selected = False
-            if not presence.is_present(persoon, day, pod):
-                persoon.absent = date.today()
+            persoon.absent = persoon.idp_user_id not in present_members
             persoon.save()
 
-        queryset = queryset.exclude(absent=date.today())
-        queryset = queryset.exclude(latest__gt=date.today() - timedelta(days=settings.ABSOLVE_DAYS))
+        queryset = queryset.exclude(absent=True)
+        queryset = queryset.exclude(latest__gt=timezone.now() - timedelta(days=settings.ABSOLVE_DAYS))
         queryset = queryset.order_by('latest')
 
         queryset = queryset[:3]
