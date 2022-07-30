@@ -2,10 +2,11 @@ from datetime import date, timedelta
 
 import requests
 from django.conf import settings
+from django.db import transaction
 from django.utils import timezone
 
-from .models import Persoon, LastSync
-from .presence_api_client import PresenceApiClient
+from corvee.src.models import Persoon, LastSync
+from corvee.src.presence_api_client import PresenceApiClient
 
 
 class Corvee:
@@ -85,7 +86,8 @@ class Corvee:
         queryset = queryset.order_by('latest')
 
         # Select oldest 3 members based on 'latest' date
-        selected = queryset[:3]
-        for person in selected:
-            person.selected = True
-            person.save()
+        with transaction.atomic():
+            selected = queryset[:3]
+            for persoon in selected:
+                persoon.selected = True
+                persoon.save()

@@ -11,9 +11,9 @@ from django.views.generic.edit import View
 from django.views.generic.list import ListView
 from requests_oauthlib import OAuth2Session
 
-from .corvee import Corvee
-from .mixins import PermissionRequiredMixin
-from .models import Persoon, AuditLog
+from corvee.src.corvee import Corvee
+from corvee.src.mixins import PermissionRequiredMixin
+from corvee.src.models import Persoon, AuditLog
 
 
 class Auditor:

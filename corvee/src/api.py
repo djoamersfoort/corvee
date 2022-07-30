@@ -1,7 +1,7 @@
 from django.http.response import JsonResponse
 from django.views import View
 
-from .models import Persoon
+from corvee.src.models import Persoon
 
 
 class SelectedV1(View):

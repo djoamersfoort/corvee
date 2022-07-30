@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Persoon, AuditLog, LastSync
+from corvee.src.models import Persoon, AuditLog, LastSync
 
 # Register your models here.
 

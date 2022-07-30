@@ -4,7 +4,7 @@ from django.core.cache import cache
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
-from .models import Persoon
+from corvee.src.models import Persoon
 
 
 class PresenceApiClient:

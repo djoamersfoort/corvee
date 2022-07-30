@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from .src import views
-from .src import api
+from corvee.src import views
+from corvee.src import api
 
 urlpatterns = [
     path('admin/', admin.site.urls),

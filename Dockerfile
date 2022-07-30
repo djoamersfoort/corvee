@@ -18,7 +18,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Port to expose
 EXPOSE 80
 
-COPY django/corvee/ /srv/corvee/
+COPY corvee /srv/corvee/corvee
+COPY manage.py /srv/corvee
 
 # Copy entrypoint script into the image
 WORKDIR /srv/corvee
