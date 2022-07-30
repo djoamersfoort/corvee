@@ -29,9 +29,9 @@ class Corvee:
             return
 
         response = requests.get(settings.LEDEN_ADMIN_API_URL,
-                                headers={'Authorization': 'Bearer {0}'.format(access_token)})
+                                headers={'Authorization': f'Bearer {access_token}'})
         if not response.ok:
-            print("Error getting members: {0}".format(response.content))
+            print(f"Error getting members: {response.status_code}, {response.content}")
 
         Persoon.objects.all().update(marked_for_deletion=True)
 
@@ -73,8 +73,8 @@ class Corvee:
         if weekday not in [4, 5]:
             return
         pod = Corvee._get_pod()
-        presence = PresenceApiClient(client_id=settings.PRESENCE_CLIENT_ID,
-                                     client_secret=settings.PRESENCE_CLIENT_SECRET,
+        presence = PresenceApiClient(client_id=settings.BACKEND_CLIENT_ID,
+                                     client_secret=settings.BACKEND_CLIENT_SECRET,
                                      token_url=settings.IDP_TOKEN_URL, presence_api_url=settings.PRESENCE_API_URL)
         present_members = presence.are_present(day, pod)
         Persoon.objects.update(selected=False, absent=True)
