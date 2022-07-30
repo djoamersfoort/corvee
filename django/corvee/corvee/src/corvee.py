@@ -76,18 +76,16 @@ class Corvee:
                                      client_secret=settings.PRESENCE_CLIENT_SECRET,
                                      token_url=settings.IDP_TOKEN_URL, presence_api_url=settings.PRESENCE_API_URL)
         present_members = presence.are_present(day, pod)
-        print(present_members)
-        queryset = Persoon.objects.all()
-        for persoon in queryset:
-            persoon.selected = False
-            persoon.absent = persoon.idp_user_id not in present_members
-            persoon.save()
+        Persoon.objects.update(selected=False, absent=True)
+        Persoon.objects.filter(idp_user_id__in=present_members).update(absent=False)
 
+        queryset = Persoon.objects.all().exclude(absent=True)
         queryset = queryset.exclude(absent=True)
         queryset = queryset.exclude(latest__gt=timezone.now() - timedelta(days=settings.ABSOLVE_DAYS))
         queryset = queryset.order_by('latest')
 
-        queryset = queryset[:3]
-        for persoon in queryset:
-            persoon.selected = True
-            persoon.save()
+        # Select oldest 3 members based on 'latest' date
+        selected = queryset[:3]
+        for person in selected:
+            person.selected = True
+            person.save()
