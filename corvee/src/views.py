@@ -77,11 +77,6 @@ class LoginResponseView(View):
 
             auth_login(request, found_user)
 
-            # Sync the database with member-admin
-            # FIXME: temp. disable in-request syncing, this should be moved to a mgmt command.
-            #  Causes db concurrency issues
-            # Corvee.update_members(access_token['access_token'])
-
             return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
         else:
             return HttpResponseForbidden('IDP Login mislukt')
