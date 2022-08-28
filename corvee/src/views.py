@@ -52,34 +52,34 @@ class LoginResponseView(View):
             # Something went wrong getting the token
             return HttpResponseForbidden('Geen toegang: {0}'.format(e))
 
-        if 'access_token' in access_token and access_token['access_token'] != '':
-            user_profile = oauth.get(settings.IDP_API_URL).json()
-            username = "idp-{0}".format(user_profile['id'])
-
-            try:
-                found_user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                found_user = User()
-                found_user.username = username
-                found_user.password = uuid.uuid4()
-                found_user.first_name = user_profile['firstName']
-                found_user.last_name = user_profile['lastName']
-                found_user.is_superuser = True
-                found_user.save()
-            
-            if not found_user.is_staff:
-                for required_role in settings.IDP_REQUIRED_ROLES:
-                    if required_role in user_profile['accountType'].lower():
-                        break
-                else:
-                    roles = ','.join(settings.IDP_REQUIRED_ROLES)
-                    return HttpResponseForbidden(f'Deze pagina is alleen toegankelijk voor de volgende rollen: {roles}.')
-
-            auth_login(request, found_user)
-
-            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
-        else:
+        if 'access_token' not in access_token or access_token['access_token'] == '':
             return HttpResponseForbidden('IDP Login mislukt')
+
+        user_profile = oauth.get(settings.IDP_API_URL).json()
+        username = "idp-{0}".format(user_profile['id'])
+
+        try:
+            found_user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            found_user = User()
+            found_user.username = username
+            found_user.password = uuid.uuid4()
+            found_user.first_name = user_profile['firstName']
+            found_user.last_name = user_profile['lastName']
+            found_user.is_superuser = True
+            found_user.save()
+
+        if not found_user.is_staff:
+            for required_role in settings.IDP_REQUIRED_ROLES:
+                if required_role in user_profile['accountType'].lower():
+                    break
+            else:
+                roles = ','.join(settings.IDP_REQUIRED_ROLES)
+                return HttpResponseForbidden(f'Deze pagina is alleen toegankelijk voor de volgende rollen: {roles}.')
+
+        auth_login(request, found_user)
+
+        return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
 
 
 class LogoffView(PermissionRequiredMixin, View):
@@ -164,7 +164,7 @@ class Absent(PermissionRequiredMixin, View):
 
         Auditor.audit(persoon.first_name, persoon.last_name, 'absent', request.user)
 
-        Corvee.renew_list()
+        Corvee.renew_list(requery_present_members=False)
 
         return HttpResponseRedirect(url)
 

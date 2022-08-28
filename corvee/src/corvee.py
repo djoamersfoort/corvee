@@ -67,21 +67,25 @@ class Corvee:
         return pod
 
     @staticmethod
-    def renew_list():
+    def renew_list(requery_present_members=True):
         weekday = timezone.now().weekday()
         day = 'fri' if weekday == 4 else 'sat'
         if weekday not in [4, 5]:
             return
         pod = Corvee._get_pod()
-        presence = PresenceApiClient(client_id=settings.BACKEND_CLIENT_ID,
-                                     client_secret=settings.BACKEND_CLIENT_SECRET,
-                                     token_url=settings.IDP_TOKEN_URL, presence_api_url=settings.PRESENCE_API_URL)
-        present_members = presence.are_present(day, pod)
-        Persoon.objects.update(selected=False, absent=True)
-        Persoon.objects.filter(idp_user_id__in=present_members).update(absent=False)
+        if requery_present_members:
+            # Get list of present members from 'Aanmelden' API
+            presence = PresenceApiClient(client_id=settings.BACKEND_CLIENT_ID,
+                                         client_secret=settings.BACKEND_CLIENT_SECRET,
+                                         token_url=settings.IDP_TOKEN_URL, presence_api_url=settings.PRESENCE_API_URL)
+            present_members = presence.are_present(day, pod)
+            Persoon.objects.update(selected=False, absent=True)
+            Persoon.objects.filter(idp_user_id__in=present_members).update(absent=False)
+        else:
+            # Reset 'selected' flag for everyone
+            Persoon.objects.update(selected=False)
 
         queryset = Persoon.objects.all().exclude(absent=True)
-        queryset = queryset.exclude(absent=True)
         queryset = queryset.exclude(latest__gt=timezone.now() - timedelta(days=settings.ABSOLVE_DAYS))
         queryset = queryset.order_by('latest')
 
