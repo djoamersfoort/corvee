@@ -8,6 +8,6 @@ class SelectedV1(View):
     def get(self, request, *args, **kwargs):
         selected = Persoon.objects.filter(selected=True)
         present = Persoon.objects.filter(absent=False)
-        names = [person.first_name for person in selected]
-        present_names = [person.first_name for person in present]
+        names = [person.short_name for person in selected]
+        present_names = [person.short_name for person in present]
         return JsonResponse({"selected": names, "present": present_names})

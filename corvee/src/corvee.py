@@ -29,7 +29,7 @@ class Corvee:
             return
 
         response = requests.get(settings.LEDEN_ADMIN_API_URL,
-                                headers={'Authorization': f'Bearer {access_token}'})
+                                headers={'Authorization': f'Bearer {access_token}'}, timeout=60)
         if not response.ok:
             print(f"Error getting members: {response.status_code}, {response.content}")
 
