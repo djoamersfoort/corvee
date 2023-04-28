@@ -12,7 +12,8 @@ class Persoon(models.Model):
 
     @property
     def short_name(self):
-        return f"{self.first_name} {self.last_name.upper()[0]}."
+        last_name = self.last_name.split()[-1]
+        return f"{self.first_name} {last_name.upper()[0]}."
 
     idp_user_id = models.CharField(max_length=10, default='')
     first_name = models.CharField(max_length=255)
