@@ -10,4 +10,4 @@ class SelectedV1(TokenRequiredMixin):
         present = Persoon.objects.filter(absent=False)
         names = [person.short_name for person in selected]
         present_names = [person.short_name for person in present]
-        return JsonResponse({"selected": names, "present": present_names, })
+        return JsonResponse({"selected": names, "present": present_names})
