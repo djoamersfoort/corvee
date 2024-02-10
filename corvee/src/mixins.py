@@ -17,8 +17,8 @@ class PermissionRequiredMixin(UserPassesTestMixin):
 
 class TokenRequiredMixin(View):
     def dispatch(self, request, *args, **kwargs):
-        given_token = request.headers.get("Authorization", None)
-        correct_token = f"Bearer {settings.API_TOKEN}"
+        given_token = request.headers.get("Authorization", "").lower()
+        correct_token = f"Bearer {settings.API_TOKEN}".lower()
 
         if given_token == correct_token:
             return super(TokenRequiredMixin, self).dispatch(request, *args, **kwargs)
