@@ -1,10 +1,10 @@
 from django.http.response import JsonResponse
-from django.views import View
 
 from corvee.src.models import Persoon
+from corvee.src.mixins import TokenRequiredMixin
 
 
-class SelectedV1(View):
+class SelectedV1(TokenRequiredMixin):
     def get(self, request, *args, **kwargs):
         selected = Persoon.objects.filter(selected=True)
         present = Persoon.objects.filter(absent=False)
