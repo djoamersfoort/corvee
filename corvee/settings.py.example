@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# Token required for the TokenRequiredMixin, used for APIs
+API_TOKEN = "inserttokenhereuwu"
 
 # Application definition
 
