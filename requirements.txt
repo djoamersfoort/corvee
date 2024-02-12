@@ -1,6 +1,6 @@
 Django==4.1.13
 gunicorn==21.2.0
-mysqlclient==2.2.1
+mysqlclient==2.2.4
 oauthlib==3.2.2
 pytz==2023.4
 requests==2.31.0
