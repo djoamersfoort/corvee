@@ -1,4 +1,4 @@
-Django==4.1.13
+Django==5.0.3
 gunicorn==21.2.0
 mysqlclient==2.2.4
 oauthlib==3.2.2
