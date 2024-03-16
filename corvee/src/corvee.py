@@ -10,7 +10,8 @@ from corvee.src.presence_api_client import PresenceApiClient
 
 
 class Corvee:
-
+    type_filter = {'member', 'senior', 'strippenkaart'}
+    
     @staticmethod
     def is_sync_needed():
         try:
@@ -37,7 +38,8 @@ class Corvee:
 
         members = response.json()
         for member in members:
-            if 'member' not in member['types'] and 'strippenkaart' not in member['types']:
+            type_set = set(member['types'])
+            if not self.type_filter.intersection(type_set):
                 continue
 
             try:
