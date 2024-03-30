@@ -48,9 +48,9 @@ class LoginResponseView(View):
             access_token = oauth.fetch_token(settings.IDP_TOKEN_URL,
                                              authorization_response=full_response_url,
                                              client_secret=settings.IDP_CLIENT_SECRET)
-        except Exception as e:
+        except Exception:
             # Something went wrong getting the token
-            return HttpResponseForbidden('Geen toegang: {0}'.format(e))
+            return HttpResponseForbidden()
 
         if 'access_token' not in access_token or access_token['access_token'] == '':
             return HttpResponseForbidden('IDP Login mislukt')
@@ -117,8 +117,6 @@ class Leden(PermissionRequiredMixin, ListView):
 
 class Acknowledge(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        url = request.META.get('HTTP_REFERER', reverse('main'))
-
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
         persoon.latest = timezone.now()
         persoon.selected = False
@@ -126,24 +124,22 @@ class Acknowledge(PermissionRequiredMixin, View):
 
         Auditor.audit(persoon.first_name, persoon.last_name, 'acknowledged', request.user)
 
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('main'))
 
 
 class Insufficient(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        url = request.META.get('HTTP_REFERER', reverse('main'))
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
         persoon.selected = False
         persoon.save()
 
         Auditor.audit(persoon.first_name, persoon.last_name, 'insufficient', request.user)
 
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('main'))
 
 
 class Punishment(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        url = request.META.get('HTTP_REFERER', reverse('main'))
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
         persoon.latest = timezone.make_aware(datetime(1900, 1, 1, 0, 0, 0))
         persoon.selected = False
@@ -151,12 +147,12 @@ class Punishment(PermissionRequiredMixin, View):
 
         Auditor.audit(persoon.first_name, persoon.last_name, 'punishment', request.user)
 
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('main'))
 
 
 class Absent(PermissionRequiredMixin, View):
+
     def get(self, request, *args, **kwargs):
-        url = request.META.get('HTTP_REFERER', reverse('main'))
         persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
         persoon.selected = False
         persoon.absent = True
@@ -166,13 +162,10 @@ class Absent(PermissionRequiredMixin, View):
 
         Corvee.renew_list(requery_present_members=False)
 
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('main'))
 
 
 class Renew(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        url = request.META.get('HTTP_REFERER', reverse('main'))
-
         Corvee.renew_list()
-
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('main'))
