@@ -16,19 +16,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Docker Login
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4.0.0
+        uses: docker/build-push-action@v5
         with:
           file: Dockerfile
           context: .
           push: true
           tags: ghcr.io/djoamersfoort/corvee/corvee:latest
+
+      - name: Redeploy
+        run: |
+          curl https://portainer.djoamersfoort.nl/hooks/update-docker-image?stack=corvee_djoamersfoort_nl -H "X-Token: ${{ secrets.WEBHOOK_TOKEN }}"
+      
+      - name: Clean up old images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'corvee/corvee'
+          package-type: 'container'
+          min-versions-to-keep: 5
+          delete-only-untagged-versions: 'true'          
