@@ -39,7 +39,7 @@ class Corvee:
         members = response.json()
         for member in members:
             type_set = set(member['types'])
-            if not self.type_filter.intersection(type_set):
+            if not Corvee.type_filter.intersection(type_set):
                 continue
 
             try:
