@@ -38,7 +38,7 @@ class Corvee:
 
         members = response.json()
         for member in members:
-            type_set = set(member['types'])
+            type_set = set(member['types'].split(","))
             if not Corvee.type_filter.intersection(type_set):
                 continue
 
