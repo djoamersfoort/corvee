@@ -47,7 +47,7 @@ class AuthenticatedMixin:
             algorithms=openid_configuration['id_token_signing_alg_values_supported'],
             options={'verify_aud': False}
         )
-        if 'aanmelden' not in decoded_jwt:
+        if 'corvee' not in decoded_jwt:
             return HttpResponseForbidden()
 
         username = f"idp-{decoded_jwt['sub']}"
