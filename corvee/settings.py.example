@@ -115,6 +115,7 @@ USE_TZ = True
 
 
 # IDP Settings
+OPENID_CONFIGURATION = 'https://leden.djoamersfoot.nl/o/.well-known/openid-configuration'
 LOGIN_REDIRECT_URL='/main/'
 IDP_CLIENT_ID = 'henk'
 IDP_CLIENT_SECRET = 'secret'

@@ -29,7 +29,13 @@ urlpatterns = [
     path('absent/<int:pk>/', views.Absent.as_view(), name='absent'),
     path('renew/', views.Renew.as_view(), name='renew'),
     path('logoff/', views.LogoffView.as_view(), name='logoff'),
-    path('api/v1/selected', api.SelectedV1.as_view(), name='selected'),
+    path('api/v1/selected', api.SelectedV1.as_view(), name='selected_api'),
+    path('api/v1/status', api.StatusV1.as_view(), name='status_api'),
+    path('api/v1/renew', api.RenewV1.as_view(), name='renew_api'),
+    path('api/v1/ack/<int:pk>', api.AcknowledgeV1.as_view(), name='acknowledge_api'),
+    path('api/v1/insuff/<int:pk>', api.InsufficientV1.as_view(), name='insufficient_api'),
+    path('api/v1/punish/<int:pk>', api.PunishmentV1.as_view(), name='punishment_api'),
+    path('api/v1/absent/<int:pk>', api.AbsentV1.as_view(), name='absent_api'),
     re_path(r'oauth/.*', views.LoginResponseView.as_view()),
     path('', views.LoginView.as_view(), name='login')
 ]

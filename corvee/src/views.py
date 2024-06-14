@@ -1,32 +1,18 @@
 import uuid
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth import logout, login as auth_login
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import reverse
-from django.utils import timezone
 from django.views.generic.edit import View
 from django.views.generic.list import ListView
 from requests_oauthlib import OAuth2Session
 
 from corvee.src.corvee import Corvee
 from corvee.src.mixins import PermissionRequiredMixin
-from corvee.src.models import Persoon, AuditLog
-
-
-class Auditor:
-
-    @staticmethod
-    def audit(first_name, last_name, action, user):
-        audit = AuditLog()
-        audit.first_name = first_name
-        audit.last_name = last_name
-        audit.datetime = timezone.now().date()
-        audit.action = action
-        audit.performed_by = f"{user.first_name} {user.last_name}"
-        audit.save()
+from corvee.src.models import Persoon
+from corvee.src.utils import acknowledge, insufficient, punishment, absent
 
 
 class LoginView(View):
@@ -117,35 +103,21 @@ class Leden(PermissionRequiredMixin, ListView):
 
 class Acknowledge(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-        persoon.latest = timezone.now()
-        persoon.selected = False
-        persoon.save()
-
-        Auditor.audit(persoon.first_name, persoon.last_name, 'acknowledged', request.user)
+        acknowledge(request, self.kwargs.get('pk'))
 
         return HttpResponseRedirect(reverse('main'))
 
 
 class Insufficient(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-        persoon.selected = False
-        persoon.save()
-
-        Auditor.audit(persoon.first_name, persoon.last_name, 'insufficient', request.user)
+        insufficient(request, self.kwargs.get('pk'))
 
         return HttpResponseRedirect(reverse('main'))
 
 
 class Punishment(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-        persoon.latest = timezone.make_aware(datetime(1900, 1, 1, 0, 0, 0))
-        persoon.selected = False
-        persoon.save()
-
-        Auditor.audit(persoon.first_name, persoon.last_name, 'punishment', request.user)
+        punishment(request, self.kwargs.get('pk'))
 
         return HttpResponseRedirect(reverse('main'))
 
@@ -153,14 +125,7 @@ class Punishment(PermissionRequiredMixin, View):
 class Absent(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        persoon = Persoon.objects.get(pk=self.kwargs.get('pk'))
-        persoon.selected = False
-        persoon.absent = True
-        persoon.save()
-
-        Auditor.audit(persoon.first_name, persoon.last_name, 'absent', request.user)
-
-        Corvee.renew_list(requery_present_members=False)
+        absent(request, self.kwargs.get('pk'))
 
         return HttpResponseRedirect(reverse('main'))
 

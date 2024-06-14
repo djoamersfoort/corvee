@@ -59,7 +59,7 @@ class Corvee:
         Persoon.objects.filter(marked_for_deletion=True).delete()
 
     @staticmethod
-    def _get_pod():
+    def get_pod():
         pod = 'm'
         hour = timezone.now().hour
         if hour >= 18:
@@ -74,7 +74,7 @@ class Corvee:
         day = 'fri' if weekday == 4 else 'sat'
         if weekday not in [4, 5]:
             return
-        pod = Corvee._get_pod()
+        pod = Corvee.get_pod()
         if requery_present_members:
             # Get list of present members from 'Aanmelden' API
             presence = PresenceApiClient(client_id=settings.BACKEND_CLIENT_ID,
