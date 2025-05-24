@@ -9,6 +9,10 @@ on:
     - cron:  '0 8 1 * *'
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
