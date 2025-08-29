@@ -3,6 +3,15 @@ addEventListener("DOMContentLoaded", () => {
     let disappearAnimationBusy = false;
 
     document.querySelectorAll(".card-img-top").forEach((img, i) => {
+        /* // for introduction spin
+        const duration = (i + 5) * 400;
+        img.style.animationDuration = `${duration}ms`;
+        setTimeout(() => {
+            img.style.animationDuration = "";
+            img.classList.remove("introduction-spin");
+        }, duration);
+        */
+
         // for click spin
         img.addEventListener("mousedown", () => {
             if (img.classList.contains("click-spin")) return;
