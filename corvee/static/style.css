@@ -1,3 +1,7 @@
+body {
+  overflow-x: hidden;
+}
+
 .material-switch {
   margin: 0em 1em;
 }
@@ -58,4 +62,38 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1em;
+}
+
+/* if we ever want to introduce this */
+@keyframes introduction-spin {
+  from { transform: rotate(-6000deg); }
+  to   { transform: rotate(0deg);     }
+}
+.introduction-spin {
+  animation-name: introduction-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+
+@keyframes click-spin {
+  from { transform: rotate(0deg);    }
+  to   { transform: rotate(3600deg); }
+}
+.click-spin {
+  animation-name: click-spin;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+}
+
+@keyframes disappear-spin {
+  from { transform: rotate(0deg);             }
+  to   { transform: rotate(3600deg) scale(0); }
+}
+.disappear-spin {
+  animation-name: disappear-spin;
+  animation-duration: 2s;
+  animation-timing-function: ease-in;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 }
