@@ -12,7 +12,7 @@
     {% for person in object_list %}
       <div class="col" style="min-width: 18rem; width: 18rem;">
         <div class="card" style="min-width: 18rem; width: 18rem;">
-          <img class="card-img-top" src="{{ person.picture }}" alt="Foto van ...">
+          <img class="card-img-top" src="{{ person.picture }}" alt="Foto van {{ person.first_name }} {{ person.last_name }}">
           <div class="card-body">
             <h5 class="card-title">{{ person.first_name }} {{ person.last_name }}</h5>
             <a href="{% url 'acknowledge' person.id %}" class="card-link">Aftekenen</a>
