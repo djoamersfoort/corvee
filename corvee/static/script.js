@@ -30,9 +30,9 @@ addEventListener("DOMContentLoaded", () => {
 
                 if (disappearAnimationBusy) return;
                 disappearAnimationBusy = true;
-    
+
                 card.classList.add("disappear-spin");
-                setTimeout(() => location.href = a.href, 2000);
+                setTimeout(() => location.href = a.href, 100);
             });
         });
     });

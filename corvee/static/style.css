@@ -92,7 +92,7 @@ body {
 }
 .disappear-spin {
   animation-name: disappear-spin;
-  animation-duration: 2s;
+  animation-duration: 0.1s;
   animation-timing-function: ease-in;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
