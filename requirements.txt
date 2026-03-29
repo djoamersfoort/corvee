@@ -6,4 +6,4 @@ pytz==2026.1.post1
 requests==2.33.0
 requests-oauthlib==2.0.0
 pyjwt==2.12.1
-cryptography==46.0.5
+cryptography==46.0.6
