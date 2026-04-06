@@ -3,7 +3,7 @@ gunicorn==25.3.0
 mysqlclient==2.2.8
 oauthlib==3.3.1
 pytz==2026.1.post1
-requests==2.33.0
+requests==2.33.1
 requests-oauthlib==2.0.0
 pyjwt==2.12.1
 cryptography==46.0.6
