@@ -6,23 +6,23 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('src', '0002_persoon_laatst'),
+        ("src", "0002_persoon_laatst"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='persoon',
-            old_name='dag',
-            new_name='day',
+            model_name="persoon",
+            old_name="dag",
+            new_name="day",
         ),
         migrations.RenameField(
-            model_name='persoon',
-            old_name='laatst',
-            new_name='latest',
+            model_name="persoon",
+            old_name="laatst",
+            new_name="latest",
         ),
         migrations.RenameField(
-            model_name='persoon',
-            old_name='foto',
-            new_name='picture',
+            model_name="persoon",
+            old_name="foto",
+            new_name="picture",
         ),
     ]

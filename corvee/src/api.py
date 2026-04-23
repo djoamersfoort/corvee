@@ -26,11 +26,15 @@ class StatusV1(AuthenticatedMixin, View):
         if weekday not in [4, 5]:
             return JsonResponse({"ok": False, "error": "Vandaag is er geen corvee"})
 
-        return JsonResponse({
-            "current": list(Persoon.objects.filter(selected=True).order_by('latest').values()),
-            "day": day,
-            "pod": pod
-        })
+        return JsonResponse(
+            {
+                "current": list(
+                    Persoon.objects.filter(selected=True).order_by("latest").values()
+                ),
+                "day": day,
+                "pod": pod,
+            }
+        )
 
 
 class RenewV1(AuthenticatedMixin, View):
@@ -41,27 +45,27 @@ class RenewV1(AuthenticatedMixin, View):
 
 class AcknowledgeV1(AuthenticatedMixin, View):
     def get(self, request, *args, **kwargs):
-        acknowledge(request, self.kwargs.get('pk'))
+        acknowledge(request, self.kwargs.get("pk"))
 
         return JsonResponse({"ok": True})
 
 
 class InsufficientV1(AuthenticatedMixin, View):
     def get(self, request, *args, **kwargs):
-        insufficient(request, self.kwargs.get('pk'))
+        insufficient(request, self.kwargs.get("pk"))
 
         return JsonResponse({"ok": True})
 
 
 class PunishmentV1(AuthenticatedMixin, View):
     def get(self, request, *args, **kwargs):
-        punishment(request, self.kwargs.get('pk'))
+        punishment(request, self.kwargs.get("pk"))
 
         return JsonResponse({"ok": True})
 
 
 class AbsentV1(AuthenticatedMixin, View):
     def get(self, request, *args, **kwargs):
-        absent(request, self.kwargs.get('pk'))
+        absent(request, self.kwargs.get("pk"))
 
         return JsonResponse({"ok": True})

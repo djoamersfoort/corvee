@@ -1,0 +1,22 @@
+[tool.black]
+force-exclude = '''
+corvee/src/migrations/
+'''
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.MASTER]
+load-plugins = 'pylint_django'
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "line-too-long",
+    "too-few-public-methods",
+    "too-many-ancestors",
+]
+ignore = [
+    "migrations/*",
+    "settings.py.example"
+]

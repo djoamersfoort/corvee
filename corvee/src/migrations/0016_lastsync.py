@@ -6,15 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('src', '0015_auditlog_performed_by'),
+        ("src", "0015_auditlog_performed_by"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LastSync',
+            name="LastSync",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('last_sync_date', models.DateField(blank=True, default='2000-01-01', null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "last_sync_date",
+                    models.DateField(blank=True, default="2000-01-01", null=True),
+                ),
             ],
         ),
     ]

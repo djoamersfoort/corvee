@@ -6,22 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('src', '0004_auto_20190414_0812'),
+        ("src", "0004_auto_20190414_0812"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='persoon',
-            name='day',
+            model_name="persoon",
+            name="day",
         ),
         migrations.AddField(
-            model_name='persoon',
-            name='day_friday',
+            model_name="persoon",
+            name="day_friday",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='persoon',
-            name='day_saturday',
+            model_name="persoon",
+            name="day_saturday",
             field=models.BooleanField(default=False),
         ),
     ]

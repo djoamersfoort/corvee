@@ -7,18 +7,37 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Persoon',
+            name="Persoon",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=255)),
-                ('last_name', models.CharField(max_length=255)),
-                ('foto', models.BinaryField(blank=True, editable=True, null=True, verbose_name='Foto')),
-                ('dag', models.CharField(choices=[('vrijdag', 'Vrijdag'), ('zaterdag', 'Zaterdag')], default='vrijdag', max_length=8)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=255)),
+                ("last_name", models.CharField(max_length=255)),
+                (
+                    "foto",
+                    models.BinaryField(
+                        blank=True, editable=True, null=True, verbose_name="Foto"
+                    ),
+                ),
+                (
+                    "dag",
+                    models.CharField(
+                        choices=[("vrijdag", "Vrijdag"), ("zaterdag", "Zaterdag")],
+                        default="vrijdag",
+                        max_length=8,
+                    ),
+                ),
             ],
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('src', '0016_lastsync'),
+        ("src", "0016_lastsync"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='persoon',
-            name='idp_user_id',
-            field=models.CharField(default='', max_length=10),
+            model_name="persoon",
+            name="idp_user_id",
+            field=models.CharField(default="", max_length=10),
         ),
     ]

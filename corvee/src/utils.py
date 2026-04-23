@@ -31,14 +31,14 @@ def get_openid_configuration():
 
 @lru_cache()
 def get_jwks_client():
-    return PyJWKClient(uri=get_openid_configuration()['jwks_uri'])
+    return PyJWKClient(uri=get_openid_configuration()["jwks_uri"])
 
 
 def get_access_token(request) -> (str, None):
-    token = request.GET.get('access_token', '').strip()
+    token = request.GET.get("access_token", "").strip()
     if token == "":
-        parts = request.headers.get('authorization', '').split()
-        if len(parts) == 2 and parts[0].lower() == 'bearer':
+        parts = request.headers.get("authorization", "").split()
+        if len(parts) == 2 and parts[0].lower() == "bearer":
             token = parts[1]
     if token == "":
         return None
@@ -51,7 +51,7 @@ def acknowledge(request: HttpRequest, pk: str):
     persoon.selected = False
     persoon.save()
 
-    Auditor.audit(persoon.first_name, persoon.last_name, 'acknowledged', request.user)
+    Auditor.audit(persoon.first_name, persoon.last_name, "acknowledged", request.user)
 
 
 def insufficient(request: HttpRequest, pk: str):
@@ -59,7 +59,7 @@ def insufficient(request: HttpRequest, pk: str):
     persoon.selected = False
     persoon.save()
 
-    Auditor.audit(persoon.first_name, persoon.last_name, 'insufficient', request.user)
+    Auditor.audit(persoon.first_name, persoon.last_name, "insufficient", request.user)
 
 
 def absent(request: HttpRequest, pk: str):
@@ -68,7 +68,7 @@ def absent(request: HttpRequest, pk: str):
     persoon.absent = True
     persoon.save()
 
-    Auditor.audit(persoon.first_name, persoon.last_name, 'absent', request.user)
+    Auditor.audit(persoon.first_name, persoon.last_name, "absent", request.user)
 
     Corvee.renew_list(requery_present_members=False)
 
@@ -79,4 +79,4 @@ def punishment(request: HttpRequest, pk: str):
     persoon.selected = False
     persoon.save()
 
-    Auditor.audit(persoon.first_name, persoon.last_name, 'punishment', request.user)
+    Auditor.audit(persoon.first_name, persoon.last_name, "punishment", request.user)
