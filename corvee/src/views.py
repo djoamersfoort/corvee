@@ -1,8 +1,8 @@
 import uuid
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth import logout, login as auth_login
-from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import reverse
 from django.views.generic.edit import View
@@ -17,51 +17,70 @@ from corvee.src.utils import acknowledge, insufficient, punishment, absent
 
 class LoginView(View):
     def get(self, request, *args, **kwargs):
-        oauth = OAuth2Session(client_id=settings.IDP_CLIENT_ID,
-                              redirect_uri=settings.IDP_REDIRECT_URL,
-                              scope=settings.IDP_SCOPES)
+        oauth = OAuth2Session(
+            client_id=settings.IDP_CLIENT_ID,
+            redirect_uri=settings.IDP_REDIRECT_URL,
+            scope=settings.IDP_SCOPES,
+            pkce="S256",
+        )
         auth_url, state = oauth.authorization_url(settings.IDP_AUTHORIZE_URL)
+        request.session["oauth_state"] = state
+        request.session["code_verifier"] = (
+            oauth._code_verifier  # pylint: disable=protected-access
+        )
         return HttpResponseRedirect(auth_url)
 
 
 class LoginResponseView(View):
     def get(self, request, *args, **kwargs):
-        oauth = OAuth2Session(client_id=settings.IDP_CLIENT_ID,
-                              redirect_uri=settings.IDP_REDIRECT_URL)
+        saved_state = request.session.pop("oauth_state", None)
+        code_verifier = request.session.pop("code_verifier", None)
+        oauth = OAuth2Session(
+            client_id=settings.IDP_CLIENT_ID,
+            redirect_uri=settings.IDP_REDIRECT_URL,
+            state=saved_state,
+            scope=settings.IDP_SCOPES,
+        )
         full_response_url = request.build_absolute_uri()
-        full_response_url = full_response_url.replace('http:', 'https:')
+        full_response_url = full_response_url.replace("http:", "https:")
         try:
-            access_token = oauth.fetch_token(settings.IDP_TOKEN_URL,
-                                             authorization_response=full_response_url,
-                                             client_secret=settings.IDP_CLIENT_SECRET)
-        except Exception:
+            access_token = oauth.fetch_token(
+                settings.IDP_TOKEN_URL,
+                authorization_response=full_response_url,
+                client_secret=settings.IDP_CLIENT_SECRET,
+                code_verifier=code_verifier,
+            )
+        except Exception:  #  pylint: disable=broad-except
             # Something went wrong getting the token
             return HttpResponseForbidden()
 
-        if 'access_token' not in access_token or access_token['access_token'] == '':
-            return HttpResponseForbidden('IDP Login mislukt')
+        if "access_token" not in access_token or access_token["access_token"] == "":
+            return HttpResponseForbidden("IDP Login mislukt")
 
         user_profile = oauth.get(settings.IDP_API_URL).json()
-        username = "idp-{0}".format(user_profile['id'])
+        username = f"idp-{user_profile["id"]}"
 
+        user_model = get_user_model()
         try:
-            found_user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            found_user = User()
+            found_user = user_model.objects.get(username=username)
+        except user_model.DoesNotExist:
+            found_user = user_model()
             found_user.username = username
             found_user.password = uuid.uuid4()
-            found_user.first_name = user_profile['firstName']
-            found_user.last_name = user_profile['lastName']
+            found_user.first_name = user_profile["firstName"]
+            found_user.last_name = user_profile["lastName"]
             found_user.is_superuser = True
             found_user.save()
 
         if not found_user.is_staff:
             for required_role in settings.IDP_REQUIRED_ROLES:
-                if required_role in user_profile['accountType'].lower():
+                if required_role in user_profile["accountType"].lower():
                     break
             else:
-                roles = ','.join(settings.IDP_REQUIRED_ROLES)
-                return HttpResponseForbidden(f'Deze pagina is alleen toegankelijk voor de volgende rollen: {roles}.')
+                roles = ",".join(settings.IDP_REQUIRED_ROLES)
+                return HttpResponseForbidden(
+                    f"Deze pagina is alleen toegankelijk voor de volgende rollen: {roles}."
+                )
 
         auth_login(request, found_user)
 
@@ -72,65 +91,65 @@ class LogoffView(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         logout(request)
-        return HttpResponse(content='Uitgelogd')
+        return HttpResponse(content="Uitgelogd")
 
 
 class Main(PermissionRequiredMixin, ListView):
     model = Persoon
-    template_name = 'index.html'
+    template_name = "index.html"
 
     def get_queryset(self):
-        return Persoon.objects.filter(selected=True).order_by('latest')
+        return Persoon.objects.filter(selected=True).order_by("latest")
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['page'] = 'main'
+        context["page"] = "main"
         return context
 
 
 class Leden(PermissionRequiredMixin, ListView):
     model = Persoon
-    template_name = 'leden.html'
+    template_name = "leden.html"
 
     def get_queryset(self):
-        return Persoon.objects.all().order_by('latest')
+        return Persoon.objects.all().order_by("latest")
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['page'] = 'leden'
+        context["page"] = "leden"
         return context
 
 
 class Acknowledge(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        acknowledge(request, self.kwargs.get('pk'))
+        acknowledge(request, self.kwargs.get("pk"))
 
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse("main"))
 
 
 class Insufficient(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        insufficient(request, self.kwargs.get('pk'))
+        insufficient(request, self.kwargs.get("pk"))
 
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse("main"))
 
 
 class Punishment(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        punishment(request, self.kwargs.get('pk'))
+        punishment(request, self.kwargs.get("pk"))
 
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse("main"))
 
 
 class Absent(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        absent(request, self.kwargs.get('pk'))
+        absent(request, self.kwargs.get("pk"))
 
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse("main"))
 
 
 class Renew(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         Corvee.renew_list()
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse("main"))

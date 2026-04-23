@@ -12,5 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         client = BackendApplicationClient(client_id=settings.BACKEND_CLIENT_ID)
         session = OAuth2Session(client=client)
-        token = session.fetch_token(settings.IDP_TOKEN_URL, client_secret=settings.BACKEND_CLIENT_SECRET)
-        Corvee.update_members(token['access_token'])
+        token = session.fetch_token(
+            settings.IDP_TOKEN_URL, client_secret=settings.BACKEND_CLIENT_SECRET
+        )
+        Corvee.update_members(token["access_token"])

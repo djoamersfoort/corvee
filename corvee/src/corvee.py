@@ -10,8 +10,8 @@ from corvee.src.presence_api_client import PresenceApiClient
 
 
 class Corvee:
-    type_filter = {'member', 'senior', 'strippenkaart'}
-    
+    type_filter = {"member", "senior", "strippenkaart"}
+
     @staticmethod
     def is_sync_needed():
         try:
@@ -29,8 +29,11 @@ class Corvee:
         if not Corvee.is_sync_needed():
             return
 
-        response = requests.get(settings.LEDEN_ADMIN_API_URL,
-                                headers={'Authorization': f'Bearer {access_token}'}, timeout=60)
+        response = requests.get(
+            settings.LEDEN_ADMIN_API_URL,
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=60,
+        )
         if not response.ok:
             print(f"Error getting members: {response.status_code}, {response.content}")
 
@@ -38,19 +41,19 @@ class Corvee:
 
         members = response.json()
         for member in members:
-            type_set = set(member['types'].split(","))
+            type_set = set(member["types"].split(","))
             if not Corvee.type_filter.intersection(type_set):
                 continue
 
             try:
-                persoon = Persoon.objects.get(id=member['id'])
+                persoon = Persoon.objects.get(id=member["id"])
             except Persoon.DoesNotExist:
                 persoon = Persoon()
-            persoon.id = member['id']
-            persoon.idp_user_id = member['user_id']
-            persoon.first_name = member['first_name']
-            persoon.last_name = member['last_name']
-            persoon.picture = member['photo']
+            persoon.id = member["id"]
+            persoon.idp_user_id = member["user_id"]
+            persoon.first_name = member["first_name"]
+            persoon.last_name = member["last_name"]
+            persoon.picture = member["photo"]
             # Disable deletion mark
             persoon.marked_for_deletion = False
             persoon.save()
@@ -60,26 +63,29 @@ class Corvee:
 
     @staticmethod
     def get_pod():
-        pod = 'm'
+        pod = "m"
         hour = timezone.now().hour
         if hour >= 18:
-            pod = 'e'
+            pod = "e"
         elif hour >= 13:
-            pod = 'a'
+            pod = "a"
         return pod
 
     @staticmethod
     def renew_list(requery_present_members=True):
         weekday = timezone.now().weekday()
-        day = 'fri' if weekday == 4 else 'sat'
+        day = "fri" if weekday == 4 else "sat"
         if weekday not in [4, 5]:
             return
         pod = Corvee.get_pod()
         if requery_present_members:
             # Get list of present members from 'Aanmelden' API
-            presence = PresenceApiClient(client_id=settings.BACKEND_CLIENT_ID,
-                                         client_secret=settings.BACKEND_CLIENT_SECRET,
-                                         token_url=settings.IDP_TOKEN_URL, presence_api_url=settings.PRESENCE_API_URL)
+            presence = PresenceApiClient(
+                client_id=settings.BACKEND_CLIENT_ID,
+                client_secret=settings.BACKEND_CLIENT_SECRET,
+                token_url=settings.IDP_TOKEN_URL,
+                presence_api_url=settings.PRESENCE_API_URL,
+            )
             present_members = presence.are_present(day, pod)
             Persoon.objects.update(selected=False, absent=True)
             Persoon.objects.filter(idp_user_id__in=present_members).update(absent=False)
@@ -88,8 +94,10 @@ class Corvee:
             Persoon.objects.update(selected=False)
 
         queryset = Persoon.objects.all().exclude(absent=True)
-        queryset = queryset.exclude(latest__gt=timezone.now() - timedelta(days=settings.ABSOLVE_DAYS))
-        queryset = queryset.order_by('latest')
+        queryset = queryset.exclude(
+            latest__gt=timezone.now() - timedelta(days=settings.ABSOLVE_DAYS)
+        )
+        queryset = queryset.order_by("latest")
 
         # Select oldest 3 members based on 'latest' date
         with transaction.atomic():

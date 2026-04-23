@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('src', '0012_persoon_selected'),
+        ("src", "0012_persoon_selected"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='persoon',
-            name='marked_for_deletion',
+            model_name="persoon",
+            name="marked_for_deletion",
             field=models.BooleanField(default=False),
         ),
     ]
