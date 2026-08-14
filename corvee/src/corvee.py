@@ -64,7 +64,7 @@ class Corvee:
     @staticmethod
     def get_pod():
         pod = "m"
-        hour = timezone.now().hour
+        hour = timezone.localtime().hour
         if hour >= 18:
             pod = "e"
         elif hour >= 13:
@@ -73,7 +73,7 @@ class Corvee:
 
     @staticmethod
     def renew_list(requery_present_members=True):
-        weekday = timezone.now().weekday()
+        weekday = timezone.localtime().weekday()
         day = "fri" if weekday == 4 else "sat"
         if weekday not in [4, 5]:
             return

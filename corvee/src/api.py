@@ -20,7 +20,7 @@ class SelectedV1(TokenRequiredMixin):
 
 class StatusV1(AuthenticatedMixin, View):
     def get(self, request, *args, **kwargs):
-        weekday = timezone.now().weekday()
+        weekday = timezone.localdate().weekday()
         day = "fri" if weekday == 4 else "sat"
         pod = Corvee.get_pod()
         if weekday not in [4, 5]:
