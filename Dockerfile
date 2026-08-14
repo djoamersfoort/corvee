@@ -6,7 +6,7 @@ MAINTAINER Ronald Moesbergen
 COPY requirements.txt /srv/corvee/requirements.txt
 
 RUN apk update && \
-    apk add nginx mariadb-dev zlib-dev gcc musl-dev sqlite && \
+    apk add nginx mariadb-dev zlib-dev gcc musl-dev sqlite tzdata && \
     pip3 install --no-cache-dir -r /srv/corvee/requirements.txt && \
     apk del gcc musl-dev
 
@@ -17,6 +17,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # Port to expose
 EXPOSE 80
+ENV TZ=Europe/Amsterdam
 
 COPY corvee /srv/corvee/corvee
 COPY manage.py /srv/corvee
